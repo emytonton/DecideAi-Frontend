@@ -27,14 +27,12 @@ class RegisterViewModel : ViewModel() {
             isLoading = true
             errorMessage = null
             try {
-                // Monta o objeto baseado na página 1 da documentação
                 val request = RegisterRequest(username, email, password)
-                val response = RetrofitClient.instance.signUp(request)
+                val response = RetrofitClient.instance.signup(request)
 
                 if (response.isSuccessful) {
                     isSuccess = true // Navegar para o Login após sucesso
                 } else {
-                    // Trata erros 400 (validação) ou 409 (conflito) conforme pág 2
                     errorMessage = "Erro: ${response.code()} - Verifique os dados"
                 }
             } catch (e: Exception) {
