@@ -6,15 +6,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.decideai_front.data.model.LoginRequest
+import com.example.decideai_front.data.remote.RetrofitClient
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
 
-    // Estados da tela (O que o usuário digita)
     var email by mutableStateOf("")
     var password by mutableStateOf("")
 
-    // Estado de carregamento e mensagens
     var isLoading by mutableStateOf(false)
     var errorMessage by mutableStateOf<String?>(null)
     var loginSuccess by mutableStateOf(false)
@@ -30,17 +29,16 @@ class LoginViewModel : ViewModel() {
             errorMessage = null
 
             try {
-                // Aqui chamaremos o Retrofit (DecideAiService)
                 val request = LoginRequest(email, password)
+                val response = RetrofitClient.service.login(request)
 
-                // Simulação de chamada (vamos configurar o Retrofit no próximo passo)
-                // val response = RetrofitClient.service.login(request)
-
-                // Se sucesso:
-                loginSuccess = true
-
+                if (response.isSuccessful) {
+                    loginSuccess = true
+                } else {
+                    errorMessage = "Login inválido: Verifique seus dados"
+                }
             } catch (e: Exception) {
-                errorMessage = "Erro de conexão: ${e.message}"
+                errorMessage = "Falha na conexão com o servidor."
             } finally {
                 isLoading = false
             }

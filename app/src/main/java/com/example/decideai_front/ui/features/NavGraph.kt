@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.decideai_front.ui.features.HomeScreen
 import com.example.decideai_front.ui.features.LoginScreen
 import com.example.decideai_front.ui.features.RegisterScreen
 import com.example.decideai_front.ui.features.WelcomeScreen
@@ -36,6 +37,10 @@ fun NavGraph() {
             RegisterScreen(
                 onNavigateToLogin = { navController.navigate("login") }
             )
+        }
+        // Rota da Tela de Home
+        composable ("home"){
+            HomeScreen()
         }
     }
 }
