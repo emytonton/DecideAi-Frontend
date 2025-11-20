@@ -1,6 +1,7 @@
 package com.example.decideai_front.ui
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -28,6 +29,7 @@ fun NavGraph() {
         // Rota da Tela de Login
         composable("login") {
             LoginScreen(
+                onNavigateToHome = { navController.navigate("home") },
                 onNavigateToRegister = { navController.navigate("register") }
             )
         }

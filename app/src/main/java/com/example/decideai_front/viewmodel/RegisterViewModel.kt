@@ -28,7 +28,7 @@ class RegisterViewModel : ViewModel() {
             errorMessage = null
             try {
                 val request = RegisterRequest(username, email, password)
-                val response = RetrofitClient.instance.signup(request)
+                val response = RetrofitClient.service.signup(request)
 
                 if (response.isSuccessful) {
                     isSuccess = true // Navegar para o Login após sucesso

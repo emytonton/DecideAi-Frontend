@@ -22,8 +22,16 @@ import com.example.decideai_front.viewmodel.LoginViewModel
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = viewModel(),
-    onNavigateToRegister: () -> Unit = {}
+    onNavigateToRegister: () -> Unit = {},
+    onNavigateToHome: () -> Unit = {}
 ) {
+    androidx.compose.runtime.LaunchedEffect(viewModel.loginSuccess) {
+        if (viewModel.loginSuccess) {
+            println("DEBUG: Login com sucesso! Navegando...")
+            onNavigateToHome()
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()

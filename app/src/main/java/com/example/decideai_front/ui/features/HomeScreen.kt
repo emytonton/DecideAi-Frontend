@@ -1,14 +1,31 @@
 package com.example.decideai_front.ui.features
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,15 +54,15 @@ fun HomeScreen() {
         bottomBar = {
             NavigationBar(containerColor = Color.White) {
                 NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.ic_person_add), contentDescription = null) },
+                    icon = { Icon(painterResource(id = R.drawable.icon_add_person), contentDescription = null) },
                     selected = false, onClick = {}
                 )
                 NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.ic_home), contentDescription = "Início") },
+                    icon = { Icon(painterResource(id = R.drawable.icon_home), contentDescription = "Início") },
                     selected = true, onClick = {}
                 )
                 NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.ic_settings), contentDescription = null) },
+                    icon = { Icon(painterResource(id = R.drawable.icon_settings), contentDescription = null) },
                     selected = false, onClick = {}
                 )
             }
@@ -65,25 +82,25 @@ fun HomeScreen() {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Cartões de Decisão
+           // Cartões de Decisão
             DecisionCard(
                 title = "Decisão em grupo",
                 subtitle = "Crie uma votação e convide amigos para votar.",
-                iconRes = R.drawable.ic_group_decision,
-                iconBgColor = Color(0xFF5B99E9)
+               iconRes = R.drawable.icon_check,
+               iconBgColor = Color(0xFF5B99E9)
             )
 
             DecisionCard(
                 title = "Decisão solo",
                 subtitle = "Escolha uma categoria e vamos escolher por você.",
-                iconRes = R.drawable.ic_solo_decision,
+                iconRes = R.drawable.icon_dice,
                 iconBgColor = Color(0xFFC49AFA)
             )
 
             DecisionCard(
                 title = "Decisão por opções",
                 subtitle = "Crie uma lista com opções e vamos aleatoriamente escolher uma.",
-                iconRes = R.drawable.ic_options_decision,
+                iconRes = R.drawable.icon_list,
                 iconBgColor = Color(0xFF5EEAD4)
             )
         }
