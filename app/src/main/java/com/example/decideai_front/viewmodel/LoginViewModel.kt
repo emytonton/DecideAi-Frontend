@@ -13,10 +13,23 @@ class LoginViewModel : ViewModel() {
 
     var email by mutableStateOf("")
     var password by mutableStateOf("")
-
+    var userName by mutableStateOf("")
+    var userToken by mutableStateOf("")
     var isLoading by mutableStateOf(false)
     var errorMessage by mutableStateOf<String?>(null)
     var loginSuccess by mutableStateOf(false)
+
+    // --- ADICIONE ESTA FUNÇÃO ---
+    fun resetState() {
+        email = ""
+        password = ""
+        userName = ""
+        userToken = ""
+        isLoading = false
+        errorMessage = null
+        loginSuccess = false // Isso impede o redirecionamento automático
+    }
+    // ---------------------------
 
     fun onLoginClick() {
         if (email.isEmpty() || password.isEmpty()) {
@@ -33,7 +46,15 @@ class LoginViewModel : ViewModel() {
                 val response = RetrofitClient.service.login(request)
 
                 if (response.isSuccessful) {
-                    loginSuccess = true
+                    val body = response.body()
+                    userName = body?.user?.username ?: "Usuário"
+                    userToken = body?.accessToken ?: ""
+
+                    if (userToken.isNotEmpty()) {
+                        loginSuccess = true
+                    } else {
+                        errorMessage = "Erro ao recuperar token de acesso."
+                    }
                 } else {
                     errorMessage = "Login inválido: Verifique seus dados"
                 }

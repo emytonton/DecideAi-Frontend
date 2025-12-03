@@ -16,6 +16,16 @@ class ProfileViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
     var updateSuccess by mutableStateOf(false)
 
+    // --- NOVA FUNÇÃO: Limpa os dados do perfil ao sair ---
+    fun resetState() {
+        username = ""
+        email = ""
+        avatarUrl = null
+        isLoading = false
+        updateSuccess = false
+    }
+    // -----------------------------------------------------
+
     fun loadProfile(token: String) {
         viewModelScope.launch {
             isLoading = true
@@ -28,7 +38,11 @@ class ProfileViewModel : ViewModel() {
                         avatarUrl = it.avatar
                     }
                 }
-            } finally { isLoading = false }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                isLoading = false
+            }
         }
     }
 
@@ -39,7 +53,30 @@ class ProfileViewModel : ViewModel() {
                 val request = UpdateProfileRequest(username, email, avatarUrl)
                 val response = RetrofitClient.service.updateProfile("Bearer $token", request)
                 if (response.isSuccessful) updateSuccess = true
-            } finally { isLoading = false }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun deleteAccount(token: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                val response = RetrofitClient.service.deleteAccount("Bearer $token")
+
+                if (response.isSuccessful) {
+                    onSuccess()
+                } else {
+                    onError("Erro ao excluir: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("Erro de conexão: ${e.message}")
+            } finally {
+                isLoading = false
+            }
         }
     }
 

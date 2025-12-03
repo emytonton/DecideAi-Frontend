@@ -23,12 +23,12 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = viewModel(),
     onNavigateToRegister: () -> Unit = {},
-    onNavigateToHome: () -> Unit = {}
+    onNavigateToHome: (String, String) -> Unit = {_, _-> }
 ) {
     androidx.compose.runtime.LaunchedEffect(viewModel.loginSuccess) {
         if (viewModel.loginSuccess) {
             println("DEBUG: Login com sucesso! Navegando...")
-            onNavigateToHome()
+            onNavigateToHome(viewModel.userName, viewModel.userToken)
         }
     }
 

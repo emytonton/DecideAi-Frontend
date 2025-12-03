@@ -9,10 +9,10 @@ data class LoginRequest(
 
 data class LoginResponse(
     val accessToken: String,
-    val user: UserInfo
+    val user: UserData
 )
 
-data class UserInfo(
+data class UserData(
     val username: String,
     val email: String
 )

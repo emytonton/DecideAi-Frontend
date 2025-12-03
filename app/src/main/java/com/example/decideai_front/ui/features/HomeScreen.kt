@@ -1,5 +1,6 @@
 package com.example.decideai_front.ui.features
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,17 +36,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.decideai_front.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    userName: String,
+    userToken: String,
+    navController: NavHostController,
+    onNavigateToSettings: () -> Unit
+) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("DecideAí", fontSize = 18.sp) },
                 actions = {
-                    IconButton(onClick = { /* Perfil */ }) {
+                    IconButton(onClick = { navController.navigate("profile/$userToken") }) {
                         Icon(Icons.Default.AccountCircle, contentDescription = "Perfil", modifier = Modifier.size(32.dp))
                     }
                 }
@@ -54,16 +61,27 @@ fun HomeScreen() {
         bottomBar = {
             NavigationBar(containerColor = Color.White) {
                 NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.icon_add_person), contentDescription = null) },
-                    selected = false, onClick = {}
+                    icon = { Icon(painterResource(id = R.drawable.icon_add_person),
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp)
+                    )},
+                    selected = false, onClick = { navController.navigate("friends/$userToken") }
                 )
                 NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.icon_home), contentDescription = "Início") },
+                    icon = { Icon(painterResource(id = R.drawable.icon_home),
+                        contentDescription = "Início",
+                        modifier = Modifier.size(30.dp)
+                    )},
                     selected = true, onClick = {}
                 )
+
                 NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.icon_settings), contentDescription = null) },
-                    selected = false, onClick = {}
+                    icon = { Icon(painterResource(id = R.drawable.icon_settings),
+                        contentDescription = "Configurações",
+                        modifier = Modifier.size(30.dp)
+                    )},
+                    selected = false,
+                    onClick = onNavigateToSettings
                 )
             }
         }
@@ -77,43 +95,46 @@ fun HomeScreen() {
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Olá Anna!", fontSize = 42.sp, fontWeight = FontWeight.Light)
+            Text(text = "Olá $userName!", fontSize = 42.sp, fontWeight = FontWeight.Light)
             Text(text = "Pronto para tomar uma decisão?", color = Color.Gray, fontSize = 18.sp)
 
             Spacer(modifier = Modifier.height(32.dp))
 
-           // Cartões de Decisão
+
             DecisionCard(
                 title = "Decisão em grupo",
                 subtitle = "Crie uma votação e convide amigos para votar.",
-               iconRes = R.drawable.icon_check,
-               iconBgColor = Color(0xFF5B99E9)
+                iconRes = R.drawable.icon_check,
+                iconBgColor = Color(0xFF5B99E9)
             )
 
             DecisionCard(
                 title = "Decisão solo",
                 subtitle = "Escolha uma categoria e vamos escolher por você.",
                 iconRes = R.drawable.icon_dice,
-                iconBgColor = Color(0xFFC49AFA)
+                iconBgColor = Color(0xFFC49AFA),
+                onClick = { navController.navigate("solo_decision/$userToken") }
             )
 
             DecisionCard(
                 title = "Decisão por opções",
                 subtitle = "Crie uma lista com opções e vamos aleatoriamente escolher uma.",
                 iconRes = R.drawable.icon_list,
-                iconBgColor = Color(0xFF5EEAD4)
+                iconBgColor = Color(0xFF5EEAD4),
+                onClick = { navController.navigate("options_decision/$userToken") }
             )
         }
     }
 }
 
 @Composable
-fun DecisionCard(title: String, subtitle: String, iconRes: Int, iconBgColor: Color) {
+fun DecisionCard(title: String, subtitle: String, iconRes: Int, iconBgColor: Color, onClick: () -> Unit = {}) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp)
-            .shadow(elevation = 8.dp, shape = RoundedCornerShape(24.dp)),
+            .shadow(elevation = 8.dp, shape = RoundedCornerShape(24.dp))
+            .clickable { onClick() },
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
