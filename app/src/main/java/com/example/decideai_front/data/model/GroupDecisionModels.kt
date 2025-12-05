@@ -4,23 +4,30 @@ package com.example.decideai_front.data.model
 data class GroupDecisionRequest(
     val title: String,
     val options: List<String>,
-    val invitedFriends: List<String>
+    val invitedUserIds: List<String>
 )
 
-data class GroupDecisionResponse(
+data class GroupDecisionSummary(
     val id: String,
     val title: String,
-    val options: List<GroupOption>,
     val status: String,
-    val winner: String? = null
+    val myStatus: String,
+    val winner: String?,
+    val hasViewedResult: Boolean,
+    val createdAt: String
 )
 
-data class GroupOption(
-    val name: String,
-    val votes: Int = 0
-)
-
-data class VoteRequest(
+data class GroupVoteRequest(
     val decisionId: String,
-    val optionName: String
+    val voteOption: String? = null,
+    val decline: Boolean? = null
+)
+
+data class GroupVoteResponse(
+    val status: String,
+    val winner: String?
+)
+
+data class MarkAsViewedRequest(
+    val decisionId: String
 )
