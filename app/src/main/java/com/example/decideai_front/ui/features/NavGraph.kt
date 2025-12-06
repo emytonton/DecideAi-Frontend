@@ -8,35 +8,28 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.decideai_front.ui.features.*
-import com.example.decideai_front.viewmodel.FriendsViewModel
-import com.example.decideai_front.viewmodel.LoginViewModel
-import com.example.decideai_front.viewmodel.OptionsDecisionViewModel
-import com.example.decideai_front.viewmodel.ProfileViewModel
+import com.example.decideai_front.viewmodel.*
 
 @Composable
 fun NavGraph() {
     val navController = rememberNavController()
 
-
     val loginViewModel: LoginViewModel = viewModel()
     val profileViewModel: ProfileViewModel = viewModel()
     val friendsViewModel: FriendsViewModel = viewModel()
-
-
     val optionsViewModel: OptionsDecisionViewModel = viewModel()
+    val groupDecisionViewModel: GroupDecisionViewModel = viewModel()
 
     NavHost(
         navController = navController,
         startDestination = "welcome"
     ) {
-
         composable("welcome") {
             WelcomeScreen(
                 onNavigateToLogin = { navController.navigate("login") },
                 onNavigateToRegister = { navController.navigate("register") }
             )
         }
-
 
         composable("login") {
             LoginScreen(
@@ -50,11 +43,9 @@ fun NavGraph() {
             )
         }
 
-
         composable("register") {
             RegisterScreen(onNavigateToLogin = { navController.navigate("login") })
         }
-
 
         composable("home/{userName}/{token}") { backStackEntry ->
             val name = backStackEntry.arguments?.getString("userName") ?: "Usuário"
@@ -68,6 +59,66 @@ fun NavGraph() {
             )
         }
 
+        composable("create_group_decision/{token}") { backStackEntry ->
+            val token = backStackEntry.arguments?.getString("token") ?: ""
+            CreateGroupDecisionScreen(
+                groupVm = groupDecisionViewModel,
+                userToken = token,
+                onNavigateToInvite = {
+                    navController.navigate("invite_friends/$token")
+                },
+                onNavigateToInbox = {
+                    navController.navigate("group_inbox/$token")
+                }
+            )
+        }
+
+        composable("invite_friends/{token}") { backStackEntry ->
+            val token = backStackEntry.arguments?.getString("token") ?: ""
+            InviteFriendsScreen(
+                friendsVm = friendsViewModel,
+                groupVm = groupDecisionViewModel,
+                token = token,
+                onSuccess = {
+                    navController.popBackStack("home/{userName}/{token}", inclusive = false)
+                }
+            )
+        }
+
+        composable("group_inbox/{token}") { backStackEntry ->
+            val token = backStackEntry.arguments?.getString("token") ?: ""
+            GroupInboxScreen(groupVm = groupDecisionViewModel, token = token, onNavigateToVote = { id ->
+                navController.navigate("group_voting/$token/$id")
+            })
+        }
+
+        composable("group_voting/{token}/{decisionId}") { backStackEntry ->
+            val token = backStackEntry.arguments?.getString("token") ?: ""
+            val decisionId = backStackEntry.arguments?.getString("decisionId") ?: ""
+            VotingScreen(
+                decisionId = decisionId,
+                groupVm = groupDecisionViewModel,
+                token = token,
+                onNavigateToResult = { winner ->
+                    navController.navigate("group_result/$token/$decisionId/$winner")
+                }
+            )
+        }
+
+        composable("group_result/{token}/{decisionId}/{winner}") { backStackEntry ->
+            val token = backStackEntry.arguments?.getString("token") ?: ""
+            val decisionId = backStackEntry.arguments?.getString("decisionId") ?: ""
+            val winner = backStackEntry.arguments?.getString("winner") ?: ""
+            GroupResultScreen(
+                winner = winner,
+                decisionId = decisionId,
+                groupVm = groupDecisionViewModel,
+                token = token,
+                onClose = {
+                    navController.popBackStack("home/{userName}/{token}", inclusive = false)
+                }
+            )
+        }
 
         composable("solo_decision/{token}") { backStackEntry ->
             val token = backStackEntry.arguments?.getString("token") ?: ""
@@ -89,9 +140,6 @@ fun NavGraph() {
             )
         }
 
-
-
-
         composable("my_lists/{token}") { backStackEntry ->
             val token = backStackEntry.arguments?.getString("token") ?: ""
             MyListsScreen(
@@ -100,7 +148,6 @@ fun NavGraph() {
                 viewModel = optionsViewModel
             )
         }
-
 
         composable(
             route = "manage_list/{token}?listId={listId}",
@@ -116,7 +163,6 @@ fun NavGraph() {
             val token = backStackEntry.arguments?.getString("token") ?: ""
             val listId = backStackEntry.arguments?.getString("listId")
 
-
             OptionsDecisionScreen(
                 navController = navController,
                 userToken = token,
@@ -125,7 +171,6 @@ fun NavGraph() {
             )
         }
 
-
         composable("options_result/{resultText}") { backStackEntry ->
             val resultText = backStackEntry.arguments?.getString("resultText") ?: ""
             OptionsResultScreen(
@@ -133,7 +178,6 @@ fun NavGraph() {
                 onClose = { navController.popBackStack() }
             )
         }
-
 
         composable("profile/{token}") { backStackEntry ->
             val token = backStackEntry.arguments?.getString("token") ?: ""
@@ -172,7 +216,6 @@ fun NavGraph() {
                 viewModel = profileViewModel
             )
         }
-
 
         composable("friends/{token}") { backStackEntry ->
             val token = backStackEntry.arguments?.getString("token") ?: ""

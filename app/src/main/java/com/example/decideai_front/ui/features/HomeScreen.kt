@@ -105,7 +105,8 @@ fun HomeScreen(
                 title = "Decisão em grupo",
                 subtitle = "Crie uma votação e convide amigos para votar.",
                 iconRes = R.drawable.icon_check,
-                iconBgColor = Color(0xFF5B99E9)
+                iconBgColor = Color(0xFF5B99E9),
+                onClick = { navController.navigate("create_group_decision/$userToken") }
             )
 
             DecisionCard(

@@ -103,4 +103,27 @@ interface DecideAiService {
         @Header("Authorization") token: String,
         @Query("q") query: String
     ): Response<List<UserResponse>>
+
+    @GET("api/v1/group")
+    suspend fun getGroupDecisions(
+        @Header("Authorization") token: String
+    ): Response<List<GroupDecisionSummary>>
+
+    @POST("api/v1/group")
+    suspend fun createGroupDecision(
+        @Header("Authorization") token: String,
+        @Body request: GroupDecisionRequest
+    ): Response<Unit>
+
+    @POST("api/v1/group/answer")
+    suspend fun answerGroupDecision(
+        @Header("Authorization") token: String,
+        @Body request: GroupVoteRequest
+    ): Response<GroupVoteResponse>
+
+    @PATCH("api/v1/group/viewed")
+    suspend fun markDecisionAsViewed(
+        @Header("Authorization") token: String,
+        @Body request: MarkAsViewedRequest
+    ): Response<Unit>
 }
