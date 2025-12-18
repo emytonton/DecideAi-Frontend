@@ -1,32 +1,15 @@
 package com.example.decideai_front.ui.features
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +42,7 @@ fun HomeScreen(
             )
         },
         bottomBar = {
-            NavigationBar(containerColor = Color.White) {
+            NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
                 NavigationBarItem(
                     icon = { Icon(painterResource(id = R.drawable.icon_add_person),
                         contentDescription = null,
@@ -100,7 +83,6 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-
             DecisionCard(
                 title = "Decisão em grupo",
                 subtitle = "Crie uma votação e convide amigos para votar.",
@@ -137,7 +119,7 @@ fun DecisionCard(title: String, subtitle: String, iconRes: Int, iconBgColor: Col
             .shadow(elevation = 8.dp, shape = RoundedCornerShape(24.dp))
             .clickable { onClick() },
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
@@ -165,11 +147,15 @@ fun DecisionCard(title: String, subtitle: String, iconRes: Int, iconBgColor: Col
                     .weight(1f)
                     .padding(horizontal = 16.dp)
             ) {
-                Text(text = title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(text = title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
                 Text(text = subtitle, color = Color.Gray, fontSize = 14.sp, lineHeight = 18.sp)
             }
 
-            Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = Color.Black)
+            Icon(
+                Icons.Default.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            )
         }
     }
 }
