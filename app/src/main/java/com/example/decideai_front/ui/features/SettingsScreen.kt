@@ -20,12 +20,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.decideai_front.viewmodel.ProfileViewModel
+import com.example.decideai_front.viewmodel.ThemeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     token: String,
     viewModel: ProfileViewModel,
+    themeViewModel: ThemeViewModel,
     onNavigateToEditProfile: () -> Unit,
     onLogout: () -> Unit,
     onNavigateBack: () -> Unit
@@ -76,8 +78,8 @@ fun SettingsScreen(
             SettingsOptionItem(
                 label = "Tema Escuro",
                 icon = Icons.Default.Palette,
-                isChecked = isDarkTheme,
-                onCheckedChange = { isDarkTheme = it }
+                isChecked = themeViewModel.isDarkTheme,
+                onCheckedChange = { themeViewModel.toggleTheme() }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
