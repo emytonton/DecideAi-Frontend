@@ -1,6 +1,8 @@
 package com.example.decideai_front.ui
 
+import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -12,8 +14,10 @@ import com.example.decideai_front.ui.theme.DecideAiFrontTheme
 import com.example.decideai_front.viewmodel.*
 
 @Composable
-fun NavGraph() {
+fun NavGraph(startToken: String?, startName: String?) {
     val navController = rememberNavController()
+    val context = LocalContext.current
+
     val themeViewModel: ThemeViewModel = viewModel()
     val loginViewModel: LoginViewModel = viewModel()
     val profileViewModel: ProfileViewModel = viewModel()
@@ -21,11 +25,11 @@ fun NavGraph() {
     val optionsViewModel: OptionsDecisionViewModel = viewModel()
     val groupDecisionViewModel: GroupDecisionViewModel = viewModel()
 
+    val startRoute = if (startToken != null) "home/$startName/$startToken" else "welcome"
+
     DecideAiFrontTheme(darkTheme = themeViewModel.isDarkTheme) {
-        NavHost(
-            navController = navController,
-            startDestination = "welcome"
-        ) {
+        NavHost(navController = navController, startDestination = startRoute) {
+
             composable("welcome") {
                 WelcomeScreen(
                     onNavigateToLogin = { navController.navigate("login") },
@@ -66,12 +70,8 @@ fun NavGraph() {
                 CreateGroupDecisionScreen(
                     groupVm = groupDecisionViewModel,
                     userToken = token,
-                    onNavigateToInvite = {
-                        navController.navigate("invite_friends/$token")
-                    },
-                    onNavigateToInbox = {
-                        navController.navigate("group_inbox/$token")
-                    }
+                    onNavigateToInvite = { navController.navigate("invite_friends/$token") },
+                    onNavigateToInbox = { navController.navigate("group_inbox/$token") }
                 )
             }
 
@@ -89,9 +89,11 @@ fun NavGraph() {
 
             composable("group_inbox/{token}") { backStackEntry ->
                 val token = backStackEntry.arguments?.getString("token") ?: ""
-                GroupInboxScreen(groupVm = groupDecisionViewModel, token = token, onNavigateToVote = { id ->
-                    navController.navigate("group_voting/$token/$id")
-                })
+                GroupInboxScreen(
+                    groupVm = groupDecisionViewModel,
+                    token = token,
+                    onNavigateToVote = { id -> navController.navigate("group_voting/$token/$id") }
+                )
             }
 
             composable("group_voting/{token}/{decisionId}") { backStackEntry ->
@@ -137,7 +139,7 @@ fun NavGraph() {
                 DecisionResultScreen(
                     title = title,
                     details = details,
-                    onAccept = { navController.popBackStack("home", inclusive = false) },
+                    onAccept = { navController.popBackStack("home/{userName}/{token}", inclusive = false) },
                     onReface = { navController.popBackStack() }
                 )
             }
@@ -197,10 +199,11 @@ fun NavGraph() {
                     token = token,
                     viewModel = profileViewModel,
                     themeViewModel = themeViewModel,
-                    onNavigateToEditProfile = {
-                        navController.navigate("edit_profile/$token")
-                    },
+                    onNavigateToEditProfile = { navController.navigate("edit_profile/$token") },
                     onLogout = {
+                        val sharedPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                        sharedPrefs.edit().clear().apply()
+
                         loginViewModel.resetState()
                         profileViewModel.resetState()
                         navController.navigate("welcome") {

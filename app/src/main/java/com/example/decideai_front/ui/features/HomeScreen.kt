@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.decideai_front.R
+import com.example.decideai_front.ui.components.AppBottomBar
+import com.example.decideai_front.ui.components.AppTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,41 +34,20 @@ fun HomeScreen(
 ) {
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("DecideAí", fontSize = 18.sp) },
-                actions = {
-                    IconButton(onClick = { navController.navigate("profile/$userToken") }) {
-                        Icon(Icons.Default.AccountCircle, contentDescription = "Perfil", modifier = Modifier.size(32.dp))
-                    }
-                }
+            AppTopBar(
+                title = "DecideAí",
+                navController = navController,
+                userToken = userToken,
+                showBackButton = false,
+                showProfileIcon = true
             )
         },
         bottomBar = {
-            NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-                NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.icon_add_person),
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp)
-                    )},
-                    selected = false, onClick = { navController.navigate("friends/$userToken") }
-                )
-                NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.icon_home),
-                        contentDescription = "Início",
-                        modifier = Modifier.size(30.dp)
-                    )},
-                    selected = true, onClick = {}
-                )
-
-                NavigationBarItem(
-                    icon = { Icon(painterResource(id = R.drawable.icon_settings),
-                        contentDescription = "Configurações",
-                        modifier = Modifier.size(30.dp)
-                    )},
-                    selected = false,
-                    onClick = onNavigateToSettings
-                )
-            }
+            AppBottomBar(
+                navController = navController,
+                currentRoute = navController.currentBackStackEntry?.destination?.route,
+                userToken = userToken
+            )
         }
     ) { paddingValues ->
         Column(
