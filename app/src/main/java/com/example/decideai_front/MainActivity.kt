@@ -1,5 +1,6 @@
 package com.example.decideai_front
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,10 +14,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val savedToken = sharedPreferences.getString("token", null)
+        val savedName = sharedPreferences.getString("username", "Usuário")
+
         setContent {
             DecideAiFrontTheme {
-                Surface (color = MaterialTheme.colorScheme.background){
-                    NavGraph()
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    NavGraph(
+                        startToken = savedToken,
+                        startName = savedName
+                    )
                 }
             }
         }
