@@ -12,3 +12,4 @@ class ThemeViewModel : ViewModel() {
         isDarkTheme = !isDarkTheme
     }
 }
+
