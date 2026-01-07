@@ -1,15 +1,17 @@
 package com.example.decideai_front.viewmodel
 
+import android.app.Application
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.decideai_front.data.model.LoginRequest
 import com.example.decideai_front.data.remote.RetrofitClient
 import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     var email by mutableStateOf("")
     var password by mutableStateOf("")
@@ -19,17 +21,7 @@ class LoginViewModel : ViewModel() {
     var errorMessage by mutableStateOf<String?>(null)
     var loginSuccess by mutableStateOf(false)
 
-
-    fun resetState() {
-        email = ""
-        password = ""
-        userName = ""
-        userToken = ""
-        isLoading = false
-        errorMessage = null
-        loginSuccess = false
-    }
-
+    private val sharedPreferences = application.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     fun onLoginClick() {
         if (email.isEmpty() || password.isEmpty()) {
@@ -51,9 +43,10 @@ class LoginViewModel : ViewModel() {
                     userToken = body?.accessToken ?: ""
 
                     if (userToken.isNotEmpty()) {
+                        saveUserData(userToken, userName)
                         loginSuccess = true
                     } else {
-                        errorMessage = "Erro ao recuperar token de acesso."
+                        errorMessage = "Erro ao recuperar token."
                     }
                 } else {
                     errorMessage = "Login inválido: Verifique seus dados"
@@ -63,6 +56,24 @@ class LoginViewModel : ViewModel() {
             } finally {
                 isLoading = false
             }
+        }
+    }
+
+    fun resetState() {
+        email = ""
+        password = ""
+        userName = ""
+        userToken = ""
+        isLoading = false
+        errorMessage = null
+        loginSuccess = false
+    }
+
+    private fun saveUserData(token: String, name: String) {
+        sharedPreferences.edit().apply {
+            putString("token", token)
+            putString("username", name)
+            apply()
         }
     }
 }
