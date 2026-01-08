@@ -77,7 +77,7 @@ fun HomeScreen(
                 subtitle = "Escolha uma categoria e vamos escolher por você.",
                 iconRes = R.drawable.icon_dice,
                 iconBgColor = Color(0xFFC49AFA),
-                onClick = { navController.navigate("solo_decision/$userToken") }
+                onClick = { navController.navigate("solo_decision/$userName/$userToken") }
             )
 
             DecisionCard(
@@ -96,8 +96,8 @@ fun DecisionCard(title: String, subtitle: String, iconRes: Int, iconBgColor: Col
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp)
-            .shadow(elevation = 8.dp, shape = RoundedCornerShape(24.dp))
+            .padding(vertical = 8.dp)
+            .shadow(elevation = 6.dp, shape = RoundedCornerShape(20.dp))
             .clickable { onClick() },
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -108,28 +108,38 @@ fun DecisionCard(title: String, subtitle: String, iconRes: Int, iconBgColor: Col
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                modifier = Modifier.size(56.dp),
-                shape = RoundedCornerShape(12.dp),
-                color = iconBgColor
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        painter = painterResource(id = iconRes),
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-            }
-
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp)
+                modifier = Modifier.weight(1f)
             ) {
-                Text(text = title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
-                Text(text = subtitle, color = Color.Gray, fontSize = 14.sp, lineHeight = 18.sp)
+                Surface(
+                    modifier = Modifier.size(56.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    color = iconBgColor
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            painter = painterResource(id = iconRes),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = subtitle,
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    lineHeight = 18.sp
+                )
             }
 
             Icon(
