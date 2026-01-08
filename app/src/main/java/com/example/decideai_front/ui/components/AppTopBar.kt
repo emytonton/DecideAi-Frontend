@@ -1,6 +1,7 @@
 package com.example.decideai_front.ui.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -23,8 +24,14 @@ fun AppTopBar(
     showProfileIcon: Boolean = true
 ) {
     Column {
-        CenterAlignedTopAppBar(
-            title = { Text(title, fontSize = 18.sp) },
+        TopAppBar(
+            title = {
+                Text(
+                    text = title,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            },
             navigationIcon = {
                 if (showBackButton) {
                     IconButton(onClick = { navController.popBackStack() }) {
@@ -43,12 +50,11 @@ fun AppTopBar(
                     }
                 }
             },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.background,
                 titleContentColor = MaterialTheme.colorScheme.onBackground
             )
         )
-        // Linha divisória fina superior
         HorizontalDivider(
             thickness = 1.0.dp,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
