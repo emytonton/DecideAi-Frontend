@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import com.example.decideai_front.ui.NavGraph
+import com.example.decideai_front.ui.features.NavGraph
 import com.example.decideai_front.ui.theme.DecideAiFrontTheme
 
 class MainActivity : ComponentActivity() {
