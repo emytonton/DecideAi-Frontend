@@ -16,11 +16,11 @@ import java.net.URLDecoder
 import java.net.URLEncoder
 
 @Composable
-fun NavGraph(startToken: String?, startName: String?) {
+fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) {
     val navController = rememberNavController()
     val context = LocalContext.current
-
     val themeViewModel: ThemeViewModel = viewModel()
+    val isDark = themeViewModel.isDarkTheme
     val loginViewModel: LoginViewModel = viewModel()
     val profileViewModel: ProfileViewModel = viewModel()
     val friendsViewModel: FriendsViewModel = viewModel()
@@ -29,7 +29,7 @@ fun NavGraph(startToken: String?, startName: String?) {
 
     val startRoute = if (startToken != null) "home/$startName/$startToken" else "welcome"
 
-    DecideAiFrontTheme(darkTheme = themeViewModel.isDarkTheme) {
+    DecideAiFrontTheme(darkTheme = isDark) {
         NavHost(navController = navController, startDestination = startRoute) {
 
             composable("welcome") {

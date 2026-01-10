@@ -18,13 +18,15 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val savedToken = sharedPreferences.getString("token", null)
         val savedName = sharedPreferences.getString("username", "Usuário")
+        val isDarkModeSaved = sharedPreferences.getBoolean("is_dark_mode", false)
 
         setContent {
             DecideAiFrontTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     NavGraph(
                         startToken = savedToken,
-                        startName = savedName
+                        startName = savedName,
+                        initialDarkMode = isDarkModeSaved
                     )
                 }
             }
