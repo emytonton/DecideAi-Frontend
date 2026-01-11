@@ -16,7 +16,7 @@ class ProfileViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
     var updateSuccess by mutableStateOf(false)
 
-    // --- NOVA FUNÇÃO: Limpa os dados do perfil ao sair ---
+
     fun resetState() {
         username = ""
         email = ""
@@ -24,7 +24,7 @@ class ProfileViewModel : ViewModel() {
         isLoading = false
         updateSuccess = false
     }
-    // -----------------------------------------------------
+
 
     fun loadProfile(token: String) {
         viewModelScope.launch {

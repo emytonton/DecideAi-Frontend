@@ -2,12 +2,15 @@ package com.example.decideai_front.ui
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.decideai_front.ui.features.*
 import com.example.decideai_front.viewmodel.FriendsViewModel
 import com.example.decideai_front.viewmodel.LoginViewModel
+import com.example.decideai_front.viewmodel.OptionsDecisionViewModel
 import com.example.decideai_front.viewmodel.ProfileViewModel
 
 @Composable
@@ -17,9 +20,10 @@ fun NavGraph() {
 
     val loginViewModel: LoginViewModel = viewModel()
     val profileViewModel: ProfileViewModel = viewModel()
-
-
     val friendsViewModel: FriendsViewModel = viewModel()
+
+
+    val optionsViewModel: OptionsDecisionViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -39,7 +43,6 @@ fun NavGraph() {
                 viewModel = loginViewModel,
                 onNavigateToHome = { name, token ->
                     navController.navigate("home/$name/$token") {
-
                         popUpTo("welcome") { inclusive = true }
                     }
                 },
@@ -86,14 +89,42 @@ fun NavGraph() {
             )
         }
 
-        composable("options_decision/{token}") { backStackEntry ->
+
+
+
+        composable("my_lists/{token}") { backStackEntry ->
             val token = backStackEntry.arguments?.getString("token") ?: ""
+            MyListsScreen(
+                navController = navController,
+                token = token,
+                viewModel = optionsViewModel
+            )
+        }
+
+
+        composable(
+            route = "manage_list/{token}?listId={listId}",
+            arguments = listOf(
+                navArgument("token") { type = NavType.StringType },
+                navArgument("listId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStackEntry ->
+            val token = backStackEntry.arguments?.getString("token") ?: ""
+            val listId = backStackEntry.arguments?.getString("listId")
+
+
             OptionsDecisionScreen(
                 navController = navController,
                 userToken = token,
-                onNavigateBack = { navController.popBackStack() }
+                viewModel = optionsViewModel,
+                listIdToEdit = listId
             )
         }
+
 
         composable("options_result/{resultText}") { backStackEntry ->
             val resultText = backStackEntry.arguments?.getString("resultText") ?: ""
@@ -114,10 +145,8 @@ fun NavGraph() {
             )
         }
 
-
         composable("settings/{token}") { backStackEntry ->
             val token = backStackEntry.arguments?.getString("token") ?: ""
-
             SettingsScreen(
                 token = token,
                 viewModel = profileViewModel,
@@ -134,7 +163,6 @@ fun NavGraph() {
                 onNavigateBack = { navController.popBackStack() }
             )
         }
-
 
         composable("edit_profile/{token}") { backStackEntry ->
             val token = backStackEntry.arguments?.getString("token") ?: ""
@@ -154,7 +182,6 @@ fun NavGraph() {
                 viewModel = friendsViewModel
             )
         }
-
 
         composable("search_users/{token}") { backStackEntry ->
             val token = backStackEntry.arguments?.getString("token") ?: ""

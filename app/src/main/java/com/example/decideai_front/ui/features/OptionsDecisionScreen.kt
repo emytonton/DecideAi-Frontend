@@ -1,42 +1,17 @@
 package com.example.decideai_front.ui.features
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -45,24 +20,40 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import com.example.decideai_front.R
 import com.example.decideai_front.viewmodel.OptionsDecisionViewModel
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OptionsDecisionScreen(onNavigateBack: () -> Unit, navController: NavHostController, userToken: String) {
+fun OptionsDecisionScreen(
+    navController: NavController,
+    userToken: String,
+    viewModel: OptionsDecisionViewModel,
+    listIdToEdit: String? = null
+) {
     var listName by remember { mutableStateOf("") }
     var currentOption by remember { mutableStateOf("") }
     val optionsList = remember { mutableStateListOf<String>() }
-    val viewModel: OptionsDecisionViewModel = viewModel()
+
+
+    LaunchedEffect(listIdToEdit) {
+        if (listIdToEdit != null) {
+            val list = viewModel.myLists.find { it.id == listIdToEdit }
+            list?.let {
+                listName = it.title
+                optionsList.clear()
+                optionsList.addAll(it.options)
+            }
+        }
+    }
+
 
     LaunchedEffect(viewModel.decisionResult) {
         viewModel.decisionResult?.let { result ->
-            val encodedResult = java.net.URLEncoder.encode(result, "UTF-8")
-            navController.navigate("options_result/$result")
+            navController.navigate("options_result/$result") {
+                popUpTo("my_lists/$userToken") { inclusive = false }
+            }
             viewModel.clearResult()
         }
     }
@@ -70,15 +61,12 @@ fun OptionsDecisionScreen(onNavigateBack: () -> Unit, navController: NavHostCont
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Crie suas opções!", fontSize = 18.sp) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
-                    }
+                title = {
+                    Text(if(listIdToEdit == null) "Crie suas opções!" else "Editar Lista", fontSize = 18.sp)
                 },
-                actions = {
-                    IconButton(onClick = { /* Perfil */ }) {
-                        Icon(painterResource(id = R.drawable.ic_person), contentDescription = null, modifier = Modifier.size(32.dp))
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 }
             )
@@ -112,12 +100,12 @@ fun OptionsDecisionScreen(onNavigateBack: () -> Unit, navController: NavHostCont
 
             Text("Opções:", fontWeight = FontWeight.Bold)
 
-            // Campo para adicionar nova opção
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 OutlinedTextField(
                     value = currentOption,
                     onValueChange = { currentOption = it },
-                    placeholder = { Text("Jogar GTA...", color = Color.LightGray) },
+                    placeholder = { Text("Adicionar opção...", color = Color.LightGray) },
                     modifier = Modifier.weight(1f).padding(vertical = 8.dp).shadow(2.dp, RoundedCornerShape(24.dp)),
                     shape = RoundedCornerShape(24.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -143,14 +131,13 @@ fun OptionsDecisionScreen(onNavigateBack: () -> Unit, navController: NavHostCont
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-            // Lista de opções adicionadas
+            // Lista de opções
             LazyColumn(modifier = Modifier.weight(1f)) {
                 itemsIndexed(optionsList) { index, option ->
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Ícone do dado pequeno à esquerda
                         Icon(
                             painter = painterResource(id = R.drawable.icon_dice),
                             contentDescription = null,
@@ -160,7 +147,7 @@ fun OptionsDecisionScreen(onNavigateBack: () -> Unit, navController: NavHostCont
 
                         OutlinedTextField(
                             value = option,
-                            onValueChange = { /* Editar se necessário */ },
+                            onValueChange = {},
                             modifier = Modifier.weight(1f).padding(horizontal = 8.dp).shadow(2.dp, RoundedCornerShape(24.dp)),
                             shape = RoundedCornerShape(24.dp),
                             readOnly = true,
@@ -183,10 +170,11 @@ fun OptionsDecisionScreen(onNavigateBack: () -> Unit, navController: NavHostCont
                 }
             }
 
-            // Botões de ação inferiores
+
             Column(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
+
                 Button(
-                    onClick = { viewModel.makeDecisionOptions(listName, optionsList.toList(), userToken) },
+                    onClick = { viewModel.decideTemp(userToken, optionsList.toList()) },
                     modifier = Modifier.fillMaxWidth().height(56.dp).padding(vertical = 4.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFC5E1A5)),
                     shape = RoundedCornerShape(12.dp)
@@ -197,15 +185,23 @@ fun OptionsDecisionScreen(onNavigateBack: () -> Unit, navController: NavHostCont
                 }
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
                     Button(
-                        onClick = { /* Salvar */ },
+                        onClick = {
+                            viewModel.saveList(userToken, listIdToEdit, listName, optionsList.toList()) {
+                                navController.popBackStack()
+                            }
+                        },
                         modifier = Modifier.weight(1f).height(48.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFC5E1A5)),
                         shape = RoundedCornerShape(12.dp)
                     ) { Text("Salvar") }
 
+
                     Button(
-                        onClick = { /* Salvar e sortear */ },
+                        onClick = {
+                            viewModel.saveAndDecide(userToken, listIdToEdit, listName, optionsList.toList())
+                        },
                         modifier = Modifier.weight(1.2f).height(48.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFC5E1A5)),
                         shape = RoundedCornerShape(12.dp)

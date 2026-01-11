@@ -121,7 +121,7 @@ fun HomeScreen(
                 subtitle = "Crie uma lista com opções e vamos aleatoriamente escolher uma.",
                 iconRes = R.drawable.icon_list,
                 iconBgColor = Color(0xFF5EEAD4),
-                onClick = { navController.navigate("options_decision/$userToken") }
+                onClick = { navController.navigate("my_lists/$userToken") }
             )
         }
     }

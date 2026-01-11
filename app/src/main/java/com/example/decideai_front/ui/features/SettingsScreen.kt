@@ -32,11 +32,11 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
 
-    // Estados para os Switches (apenas visual por enquanto)
+
     var isDarkTheme by remember { mutableStateOf(false) }
     var areNotificationsEnabled by remember { mutableStateOf(false) }
 
-    // Estado para controlar o Modal de Exclusão
+
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -49,7 +49,7 @@ fun SettingsScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Ação opcional do ícone de perfil */ }) {
+                    IconButton(onClick = { }) {
                         Icon(Icons.Default.Person, contentDescription = "Perfil")
                     }
                 }
@@ -64,7 +64,7 @@ fun SettingsScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // --- Seção Aparências ---
+
             Text(
                 text = "Aparências",
                 modifier = Modifier.fillMaxWidth(),
@@ -82,7 +82,7 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // --- Seção Notificações ---
+
             Text(
                 text = "Notificações",
                 modifier = Modifier.fillMaxWidth(),
@@ -100,9 +100,7 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // --- Botões de Ação ---
 
-            // 1. Editar Perfil (Azul)
             Button(
                 onClick = onNavigateToEditProfile,
                 modifier = Modifier.fillMaxWidth().height(50.dp),
@@ -114,7 +112,7 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 2. Sair (Cinza)
+
             Button(
                 onClick = onLogout,
                 modifier = Modifier.fillMaxWidth().height(50.dp),
@@ -126,7 +124,7 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 3. Apagar Conta (Vermelho)
+
             Button(
                 onClick = { showDeleteDialog = true }, // Abre o Modal
                 modifier = Modifier.fillMaxWidth().height(50.dp),
@@ -138,7 +136,7 @@ fun SettingsScreen(
         }
     }
 
-    // --- Modal de Confirmação (AlertDialog) ---
+
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -152,12 +150,12 @@ fun SettingsScreen(
                 Button(
                     onClick = {
                         showDeleteDialog = false
-                        // Chama a função do ViewModel criada no Passo 2
+
                         viewModel.deleteAccount(
                             token = token,
                             onSuccess = {
                                 Toast.makeText(context, "Conta excluída com sucesso.", Toast.LENGTH_SHORT).show()
-                                onLogout() // Redireciona para Login
+                                onLogout()
                             },
                             onError = { erro ->
                                 Toast.makeText(context, erro, Toast.LENGTH_LONG).show()
@@ -176,13 +174,13 @@ fun SettingsScreen(
                     Text("Cancelar")
                 }
             },
-            containerColor = Color.White, // Ajuste conforme seu tema
+            containerColor = Color.White,
             shape = RoundedCornerShape(16.dp)
         )
     }
 }
 
-// Componente auxiliar para os itens de configuração (Switch)
+
 @Composable
 fun SettingsOptionItem(
     label: String,

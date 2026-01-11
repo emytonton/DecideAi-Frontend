@@ -19,7 +19,7 @@ class LoginViewModel : ViewModel() {
     var errorMessage by mutableStateOf<String?>(null)
     var loginSuccess by mutableStateOf(false)
 
-    // --- ADICIONE ESTA FUNÇÃO ---
+
     fun resetState() {
         email = ""
         password = ""
@@ -27,9 +27,9 @@ class LoginViewModel : ViewModel() {
         userToken = ""
         isLoading = false
         errorMessage = null
-        loginSuccess = false // Isso impede o redirecionamento automático
+        loginSuccess = false
     }
-    // ---------------------------
+
 
     fun onLoginClick() {
         if (email.isEmpty() || password.isEmpty()) {

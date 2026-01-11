@@ -48,7 +48,7 @@ fun ProfileScreen(
         modifier = Modifier.fillMaxSize().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // TopBar com botão voltar
+
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(Icons.Default.ArrowBack, contentDescription = null)
@@ -58,9 +58,9 @@ fun ProfileScreen(
 
         Spacer(Modifier.height(32.dp))
 
-        // Avatar (Usando AsyncImage ou similar)
+
         Box(Modifier.size(120.dp).clip(CircleShape).background(Color(0xFFB3E5FC))) {
-            // Se tiver imagem real, use Image/AsyncImage aqui
+
             Icon(Icons.Default.Person, null, Modifier.fillMaxSize().padding(20.dp), tint = Color.White)
         }
 
@@ -79,7 +79,7 @@ fun ProfileScreen(
         Spacer(Modifier.height(16.dp))
 
         Button(
-            onClick = { /* Lógica de Logout */ },
+            onClick = { },
             modifier = Modifier.fillMaxWidth().height(56.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE57373)),
             shape = RoundedCornerShape(12.dp)
