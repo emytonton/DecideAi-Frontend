@@ -72,7 +72,7 @@ fun OptionsDecisionScreen(
         bottomBar = {
             AppBottomBar(
                 navController = navController,
-                currentRoute = navController.currentBackStackEntry?.destination?.route,
+                currentRoute = null,
                 userToken = userToken
             )
         }
@@ -92,7 +92,7 @@ fun OptionsDecisionScreen(
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Voltar",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -112,57 +112,55 @@ fun OptionsDecisionScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
-
                 Text(
                     text = "Nome da Lista:",
                     fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 OutlinedTextField(
                     value = listName,
                     onValueChange = { listName = it },
-                    placeholder = { Text("Preencha aqui...", color = Color.Gray) },
+                    placeholder = { Text("O que vou jogar?", color = Color.Gray) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
-                        .shadow(4.dp, RoundedCornerShape(24.dp)),
+                        .shadow(6.dp, RoundedCornerShape(24.dp)),
                     shape = RoundedCornerShape(24.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                         focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                        unfocusedBorderColor = Color.Transparent
                     )
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
                     text = "Opções:",
                     fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
                     OutlinedTextField(
                         value = currentOption,
                         onValueChange = { currentOption = it },
-                        placeholder = { Text("Adicionar opção...", color = Color.Gray) },
+                        placeholder = { Text("Jogar GTA...", color = Color.Gray) },
                         modifier = Modifier
                             .weight(1f)
-                            .padding(vertical = 8.dp)
-                            .shadow(2.dp, RoundedCornerShape(24.dp)),
+                            .shadow(6.dp, RoundedCornerShape(24.dp)),
                         shape = RoundedCornerShape(24.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.surface,
                             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                             focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                            unfocusedBorderColor = Color.Transparent
                         )
                     )
                     IconButton(
@@ -173,38 +171,41 @@ fun OptionsDecisionScreen(
                             }
                         },
                         modifier = Modifier
-                            .padding(start = 8.dp)
-                            .background(Color(0xFF91AFFF), CircleShape)
+                            .padding(start = 12.dp)
+                            .size(40.dp)
+                            .background(Color(0xFFAED581), CircleShape)
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Adicionar", tint = Color.White)
+                        Icon(Icons.Default.Add, contentDescription = null, tint = Color.White)
                     }
                 }
 
                 HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 16.dp),
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f)
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    color = Color.LightGray.copy(alpha = 0.5f)
                 )
 
-                LazyColumn(modifier = Modifier.weight(1f)) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     itemsIndexed(optionsList) { index, option ->
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                                .shadow(2.dp, RoundedCornerShape(24.dp)),
+                                .shadow(4.dp, RoundedCornerShape(24.dp)),
                             shape = RoundedCornerShape(24.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
                             Row(
                                 modifier = Modifier
-                                    .padding(12.dp)
+                                    .padding(16.dp)
                                     .fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.icon_dice),
                                     contentDescription = null,
-                                    tint = Color(0xFFC8ACD6),
+                                    tint = Color(0xFFAED581),
                                     modifier = Modifier.size(24.dp)
                                 )
 
@@ -213,6 +214,7 @@ fun OptionsDecisionScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .padding(horizontal = 12.dp),
+                                    fontSize = 16.sp,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
 
@@ -224,9 +226,9 @@ fun OptionsDecisionScreen(
                                 ) {
                                     Icon(
                                         Icons.Default.Close,
-                                        contentDescription = "Remover",
+                                        contentDescription = null,
                                         tint = Color.White,
-                                        modifier = Modifier.size(16.dp)
+                                        modifier = Modifier.size(14.dp)
                                     )
                                 }
                             }
@@ -237,24 +239,26 @@ fun OptionsDecisionScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp)
+                        .padding(vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Button(
                         onClick = { viewModel.decideTemp(userToken, optionsList.toList()) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp)
-                            .padding(vertical = 4.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF91AFFF)),
+                            .shadow(8.dp, RoundedCornerShape(12.dp)),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAED581)),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
                             painterResource(id = R.drawable.icon_dice),
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.White
                         )
-                        Spacer(Modifier.width(8.dp))
-                        Text("Tome sua decisão!", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.width(12.dp))
+                        Text("Tome sua decisão!", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     }
 
                     Row(
@@ -269,12 +273,15 @@ fun OptionsDecisionScreen(
                             },
                             modifier = Modifier
                                 .weight(1f)
-                                .height(48.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface),
+                                .height(56.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFAED581),
+                                contentColor = Color.White
+                            ),
                             shape = RoundedCornerShape(12.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF91AFFF))
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
                         ) {
-                            Text("Salvar", color = MaterialTheme.colorScheme.onSurface)
+                            Text("Salvar", fontWeight = FontWeight.Bold)
                         }
 
                         Button(
@@ -283,11 +290,15 @@ fun OptionsDecisionScreen(
                             },
                             modifier = Modifier
                                 .weight(1.2f)
-                                .height(48.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF91AFFF)),
-                            shape = RoundedCornerShape(12.dp)
+                                .height(56.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFAED581),
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
                         ) {
-                            Text("Salvar e sortear", color = Color.White)
+                            Text("Salvar e sortear", fontWeight = FontWeight.Bold)
                         }
                     }
                 }

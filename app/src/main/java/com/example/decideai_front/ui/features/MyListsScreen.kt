@@ -1,5 +1,6 @@
 package com.example.decideai_front.ui.features
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,35 +18,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.decideai_front.viewmodel.OptionsDecisionViewModel
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.shape.CircleShape
+import com.example.decideai_front.ui.components.AppBottomBar
+import com.example.decideai_front.ui.components.AppTopBar
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyListsScreen(
     navController: NavController,
     token: String,
     viewModel: OptionsDecisionViewModel
 ) {
-
     LaunchedEffect(Unit) {
         viewModel.loadUserLists(token)
     }
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Minhas Listas", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
-                    }
-                }
+            AppTopBar(
+                title = "DecideAí",
+                navController = navController,
+                userToken = token,
+                showBackButton = false,
+                showProfileIcon = true
+            )
+        },
+        bottomBar = {
+            AppBottomBar(
+                navController = navController,
+                currentRoute = "my_lists/$token",
+                userToken = token
             )
         }
     ) { paddingValues ->
@@ -53,67 +60,92 @@ fun MyListsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp)
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-
-
-            Button(
-                onClick = {
-
-                    navController.navigate("manage_list/$token")
-                },
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAED581)), // Verde claro
-                shape = RoundedCornerShape(24.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Criar nova lista", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+                Text(
+                    text = "Minhas Listas",
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(modifier = Modifier.width(48.dp))
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+            ) {
+                Button(
+                    onClick = { navController.navigate("manage_list/$token") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .shadow(8.dp, RoundedCornerShape(24.dp)),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAED581)),
+                    shape = RoundedCornerShape(24.dp)
+                ) {
+                    Text("Criar nova lista", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                }
 
+                Spacer(modifier = Modifier.height(24.dp))
 
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(viewModel.myLists) { list ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
-                            .shadow(2.dp, RoundedCornerShape(12.dp))
-                            .clickable {
-
-                                navController.navigate("manage_list/$token?listId=${list.id}")
-                            },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White)
-                    ) {
-                        Row(
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    items(viewModel.myLists) { list ->
+                        Card(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                                .fillMaxWidth()
+                                .height(64.dp)
+                                .shadow(6.dp, RoundedCornerShape(24.dp))
+                                .clickable { navController.navigate("manage_list/$token?listId=${list.id}") },
+                            shape = RoundedCornerShape(24.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            border = BorderStroke(1.8.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
                         ) {
-                            Text(list.title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-
-
-
-                            Box(
+                            Row(
                                 modifier = Modifier
-                                    .size(24.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFFE57373), CircleShape)
-                                    .clickable { viewModel.deleteList(token, list.id) },
-                                contentAlignment = Alignment.Center
+                                    .fillMaxSize()
+                                    .padding(horizontal = 20.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Deletar",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(14.dp)
+                                Text(
+                                    text = list.title,
+                                    modifier = Modifier.weight(1f),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
+
+                                Box(
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFE57373))
+                                        .clickable { viewModel.deleteList(token, list.id) },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                }
                             }
                         }
                     }
