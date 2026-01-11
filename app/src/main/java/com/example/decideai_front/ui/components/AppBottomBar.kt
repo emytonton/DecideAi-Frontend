@@ -17,17 +17,16 @@ fun AppBottomBar(
     userToken: String
 ) {
     Column {
-        // Linha divisória fina inferior
         HorizontalDivider(
-            thickness = 0.8.dp,
+            thickness = 1.0.dp,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
         )
         NavigationBar(
             containerColor = MaterialTheme.colorScheme.surface,
-            tonalElevation = 0.dp // Removido para manter a cor sólida #2E236C
+            tonalElevation = 0.dp
         ) {
             NavigationBarItem(
-                icon = { Icon(painterResource(R.drawable.icon_add_person), null, Modifier.size(28.dp)) },
+                icon = { Icon(painterResource(R.drawable.icon_add_person), null, Modifier.size(32.dp)) },
                 selected = currentRoute == "friends/$userToken",
                 onClick = { navController.navigate("friends/$userToken") }
             )
@@ -37,7 +36,7 @@ fun AppBottomBar(
                 onClick = { navController.navigate("home/user/$userToken") }
             )
             NavigationBarItem(
-                icon = { Icon(painterResource(R.drawable.icon_settings), "Configurações", Modifier.size(28.dp)) },
+                icon = { Icon(painterResource(R.drawable.icon_settings), "Configurações", Modifier.size(32.dp)) },
                 selected = currentRoute == "settings/$userToken",
                 onClick = { navController.navigate("settings/$userToken") }
             )

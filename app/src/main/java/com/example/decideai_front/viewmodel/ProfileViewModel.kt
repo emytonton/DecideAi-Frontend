@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class ProfileViewModel : ViewModel() {
     var username by mutableStateOf("")
     var email by mutableStateOf("")
-    var avatarUrl by mutableStateOf<String?>(null)
+    var avatar by mutableStateOf<String?>(null)
     var isLoading by mutableStateOf(false)
     var updateSuccess by mutableStateOf(false)
 
@@ -20,7 +20,7 @@ class ProfileViewModel : ViewModel() {
     fun resetState() {
         username = ""
         email = ""
-        avatarUrl = null
+        avatar = null
         isLoading = false
         updateSuccess = false
     }
@@ -30,16 +30,14 @@ class ProfileViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                val response = RetrofitClient.service.getMyProfile("Bearer $token")
+                val response = RetrofitClient.service.getProfile("Bearer $token")
                 if (response.isSuccessful) {
-                    response.body()?.let {
-                        username = it.username
-                        email = it.email
-                        avatarUrl = it.avatar
-                    }
+                    val user = response.body()
+                    username = user?.username ?: ""
+                    email = user?.email ?: ""
+                    avatar = user?.avatar
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
             } finally {
                 isLoading = false
             }
@@ -50,7 +48,7 @@ class ProfileViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading = true
             try {
-                val request = UpdateProfileRequest(username, email, avatarUrl)
+                val request = UpdateProfileRequest(username, email, avatar)
                 val response = RetrofitClient.service.updateProfile("Bearer $token", request)
                 if (response.isSuccessful) updateSuccess = true
             } catch (e: Exception) {
@@ -81,6 +79,6 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun updateAvatar(newUrl: String) {
-        avatarUrl = newUrl
+        avatar = newUrl
     }
 }

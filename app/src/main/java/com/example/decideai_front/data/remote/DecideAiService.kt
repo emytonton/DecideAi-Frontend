@@ -34,7 +34,7 @@ interface DecideAiService {
 
     // --- PERFIL ---
     @GET("api/v1/users/me")
-    suspend fun getMyProfile(@Header("Authorization") token: String): Response<UserResponse>
+    suspend fun getProfile(@Header("Authorization") token: String): Response<UserResponse>
 
     @PUT("api/v1/users/me")
     suspend fun updateProfile(@Header("Authorization") token: String, @Body request: UpdateProfileRequest): Response<UserResponse>

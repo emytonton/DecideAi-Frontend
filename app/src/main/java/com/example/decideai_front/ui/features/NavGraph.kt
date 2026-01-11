@@ -133,9 +133,14 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
                 OptionsResultScreen(result = resultText, onClose = { navController.popBackStack() })
             }
 
-            composable("profile/{token}") { backStackEntry ->
-                val token = backStackEntry.arguments?.getString("token") ?: ""
-                ProfileScreen(navController = navController, userToken = token, viewModel = profileViewModel, onNavigateBack = { navController.popBackStack() })
+            composable("profile/{userToken}") { backStackEntry ->
+                val token = backStackEntry.arguments?.getString("userToken") ?: ""
+                ProfileScreen(navController = navController, userToken = token)
+            }
+
+            composable("edit_profile/{userToken}") { backStackEntry ->
+                val token = backStackEntry.arguments?.getString("userToken") ?: ""
+                EditProfileScreen(navController = navController, userToken = token)
             }
 
             composable("settings/{token}") { backStackEntry ->
@@ -156,11 +161,6 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
                 )
             }
 
-            composable("edit_profile/{token}") { backStackEntry ->
-                val token = backStackEntry.arguments?.getString("token") ?: ""
-                EditProfileScreen(navController = navController, userToken = token, viewModel = profileViewModel)
-            }
-
             composable("friends/{token}") { backStackEntry ->
                 val token = backStackEntry.arguments?.getString("token") ?: ""
                 FriendsScreen(navController = navController, token = token, viewModel = friendsViewModel)
@@ -179,6 +179,20 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
             composable("group_inbox/{token}") { backStackEntry ->
                 val token = backStackEntry.arguments?.getString("token") ?: ""
                 GroupInboxScreen(navController, token, groupViewModel)
+            }
+
+            composable(
+                route = "select_friends/{token}?title={title}&options={options}",
+                arguments = listOf(
+                    navArgument("token") { type = NavType.StringType },
+                    navArgument("title") { type = NavType.StringType; defaultValue = "" },
+                    navArgument("options") { type = NavType.StringType; defaultValue = "" }
+                )
+            ) { backStackEntry ->
+                val token = backStackEntry.arguments?.getString("token") ?: ""
+                val title = URLDecoder.decode(backStackEntry.arguments?.getString("title") ?: "", "UTF-8")
+                val options = URLDecoder.decode(backStackEntry.arguments?.getString("options") ?: "", "UTF-8")
+                SelectFriendsScreen(navController, token, title, options, groupViewModel)
             }
         }
     }
