@@ -1,5 +1,6 @@
 package com.example.decideai_front.ui.features
 
+import android.R.attr.name
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -196,7 +197,12 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
 
             composable("group_home/{token}") { backStackEntry ->
                 val token = backStackEntry.arguments?.getString("token") ?: ""
-                GroupHomeScreen(navController, token, groupViewModel)
+                GroupHomeScreen(
+                    navController,
+                    token,
+                    groupViewModel,
+                    avatarUrl =  profileViewModel.avatar,
+                )
             }
 
             composable("group_inbox/{token}") { backStackEntry ->
@@ -242,6 +248,7 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
                     navArgument("decisionId") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
+                val name = backStackEntry.arguments?.getString("userName") ?: "Usuário"
                 val token = backStackEntry.arguments?.getString("token") ?: ""
                 val decisionId = backStackEntry.arguments?.getString("decisionId") ?: ""
 
@@ -249,6 +256,7 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
                     navController = navController,
                     token = token,
                     decisionId = decisionId,
+                    onClose = { navController.popBackStack() },
                     viewModel = groupViewModel
                 )
             }

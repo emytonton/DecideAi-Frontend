@@ -6,8 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -30,7 +32,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.decideai_front.R
 import com.example.decideai_front.ui.components.AppBottomBar
+import com.example.decideai_front.ui.components.AppTopBar
 import com.example.decideai_front.viewmodel.GroupDecisionViewModel
+import kotlin.Unit
 
 val BluePrimary = Color(0xFF6E9CE6)
 val BlueCardResult = Color(0xFF8AB4F8)
@@ -71,36 +75,29 @@ fun ErrorDisplay(message: String?, onRetry: () -> Unit) {
 fun GroupHomeScreen(
     navController: NavController,
     token: String,
-    viewModel: GroupDecisionViewModel
+    viewModel: GroupDecisionViewModel,
+    avatarUrl: String?
 ) {
     var title by remember { mutableStateOf("") }
     var currentOption by remember { mutableStateOf("") }
     val optionsList = remember { mutableStateListOf<String>() }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Decisão em grupo", fontSize = 16.sp) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
-                    }
-                },
-                actions = {
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .background(Color.Gray)
-                    )
-                }
+            AppTopBar(
+                title = "DecideAí",
+                navController = navController,
+                userToken = token,
+                avatarUrl = avatarUrl,
+                showBackButton = false,
+                showProfileIcon = true
             )
         },
         bottomBar = {
             AppBottomBar(
                 navController = navController,
-                currentRoute = navController.currentBackStackEntry?.destination?.route,
+                currentRoute = "group_home/$token",
                 userToken = token
             )
         }
@@ -108,100 +105,131 @@ fun GroupHomeScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(20.dp)
                 .fillMaxSize()
         ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 20.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Voltar",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    Text(
+                        text = "Decisão em grupo",
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.width(48.dp))
+                }
 
-            ErrorDisplay(message = viewModel.errorMessage, onRetry = { viewModel.errorMessage = null })
+                ErrorDisplay(message = viewModel.errorMessage, onRetry = { viewModel.errorMessage = null })
 
-            Text(
-                "Decida em grupo!",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text("Decisão à tomar:", fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
-            GroupTextField(value = title, onValueChange = { title = it }, placeholder = "O que iremos assistir?")
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text("Opções:", fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                GroupTextField(
-                    value = currentOption,
-                    onValueChange = { currentOption = it },
-                    placeholder = "Ação...",
-                    modifier = Modifier.weight(1f)
+                Text(
+                    text = "Decida em grupo!",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(bottom = 24.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                IconButton(
+
+                Text("Decisão à tomar:", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                Spacer(modifier = Modifier.height(8.dp))
+                GroupTextField(value = title, onValueChange = { title = it }, placeholder = "O que iremos assistir?")
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text("Opções:", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    GroupTextField(
+                        value = currentOption,
+                        onValueChange = { currentOption = it },
+                        placeholder = "Ação...",
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    IconButton(
+                        onClick = {
+                            if (currentOption.isNotBlank()) {
+                                optionsList.add(currentOption)
+                                currentOption = ""
+                            }
+                        },
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(BluePrimary, RoundedCornerShape(12.dp))
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(items = optionsList) { opt ->
+                        OptionItemDisplay(text = opt, onRemove = { optionsList.remove(opt) })
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Button(
                     onClick = {
-                        if (currentOption.isNotBlank()) {
-                            optionsList.add(currentOption)
-                            currentOption = ""
-                        }
+                        navController.navigate("select_friends/$token?title=$title&options=${optionsList.joinToString(",")}")
                     },
                     modifier = Modifier
-                        .size(48.dp)
-                        .background(BluePrimary, RoundedCornerShape(12.dp))
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = BluePrimary),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
+                    Icon(
+                        painterResource(id = R.drawable.icon_dice),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Chame seus amigos", fontSize = 16.sp, color = Color.White)
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(items = optionsList) { opt ->
-                    OptionItemDisplay(text = opt, onRemove = { optionsList.remove(opt) })
+                Button(
+                    onClick = { navController.navigate("group_inbox/$token") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = BluePrimary),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Decisões em andamento", fontSize = 16.sp, color = Color.White)
                 }
-            }
-
-            Button(
-                onClick = {
-                    navController.navigate("select_friends/$token?title=$title&options=${optionsList.joinToString(",")}")
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = BluePrimary),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.icon_dice),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = Color.White
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Chame seus amigos", fontSize = 16.sp)
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Button(
-                onClick = { navController.navigate("group_inbox/$token") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = BluePrimary),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text("Decisões em andamento", fontSize = 16.sp)
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectFriendsScreen(
     navController: NavController,
@@ -217,20 +245,11 @@ fun SelectFriendsScreen(
     }
 
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Convide seus amigos", fontSize = 16.sp) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
-                    }
-                }
-            )
-        },
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             AppBottomBar(
                 navController = navController,
-                currentRoute = navController.currentBackStackEntry?.destination?.route,
+                currentRoute = "group_home/$token",
                 userToken = token
             )
         }
@@ -238,13 +257,37 @@ fun SelectFriendsScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(20.dp)
+                .padding(horizontal = 20.dp)
                 .fillMaxSize()
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Voltar",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+                Text(
+                    text = "Convide seus amigos",
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(modifier = Modifier.width(48.dp))
+            }
 
             ErrorDisplay(message = viewModel.errorMessage, onRetry = { viewModel.loadFriendsForSelection(token) })
 
             GroupTextField(value = searchQuery, onValueChange = { searchQuery = it }, placeholder = "Digite o nome..")
+
             Spacer(modifier = Modifier.height(20.dp))
 
             LazyColumn(
@@ -277,15 +320,16 @@ fun SelectFriendsScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
+                    .height(56.dp)
+                    .padding(bottom = 8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = BluePrimary),
                 shape = RoundedCornerShape(12.dp),
                 enabled = !viewModel.isLoading
             ) {
                 if (viewModel.isLoading) {
-                    CircularProgressIndicator(color = Color.White)
+                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                 } else {
-                    Text("Confirmar Convites")
+                    Text("Confirmar Convites", color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -525,6 +569,7 @@ fun GroupResultScreen(
     navController: NavController,
     token: String,
     decisionId: String,
+    onClose: () -> Unit,
     viewModel: GroupDecisionViewModel
 ) {
     LaunchedEffect(decisionId) {
@@ -588,17 +633,13 @@ fun GroupResultScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = {
-                    navController.navigate("home/Usuário/$token") {
-                        popUpTo("home") { inclusive = true }
-                    }
-                },
+                onClick = onClose,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = BluePrimary)
             ) {
-                Text("Ir para Home")
+                Text("Voltar para decisões")
             }
         }
     }
@@ -625,14 +666,16 @@ fun GroupTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text(placeholder, color = Color.LightGray) },
+        placeholder = { Text(placeholder, color = Color.Gray) },
         modifier = modifier
             .fillMaxWidth()
             .shadow(2.dp, RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
             focusedBorderColor = Color.Transparent,
             unfocusedBorderColor = Color.Transparent
         )
@@ -645,7 +688,7 @@ fun OptionItemDisplay(text: String, onRemove: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .shadow(2.dp, RoundedCornerShape(12.dp))
-            .background(Color.White, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -656,9 +699,8 @@ fun OptionItemDisplay(text: String, onRemove: () -> Unit) {
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(12.dp))
-        Text(text, modifier = Modifier.weight(1f), color = Color.Gray)
+        Text(text, modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-        // ✅ BOTAO VERMELHO AJUSTADO (circulo 20dp, X 12dp)
         Box(
             modifier = Modifier
                 .size(20.dp)
@@ -683,18 +725,28 @@ fun FriendSelectionItem(name: String, avatarUrl: String?, isSelected: Boolean, o
         modifier = Modifier
             .fillMaxWidth()
             .shadow(2.dp, RoundedCornerShape(12.dp))
-            .background(Color.White, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(modifier = Modifier.size(40.dp).clip(CircleShape).background(Color.LightGray))
+        AvatarImage(url = avatarUrl, size = 40)
+
         Spacer(modifier = Modifier.width(12.dp))
-        Text(name, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+
+        Text(
+            text = name,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(1f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
         Box(
             modifier = Modifier
                 .size(24.dp)
-                .background(if (isSelected) BluePrimary else InputGray, RoundedCornerShape(4.dp))
+                .background(
+                    if (isSelected) BluePrimary else MaterialTheme.colorScheme.outline,
+                    RoundedCornerShape(4.dp)
+                )
                 .clickable { onToggle() },
             contentAlignment = Alignment.Center
         ) {
@@ -720,7 +772,7 @@ fun InboxItem(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(2.dp, RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp)) // ✅ respeita dark/light
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -728,12 +780,12 @@ fun InboxItem(
             Text(
                 text = title,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface // ✅ título aparece
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = statusLabel,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant // ✅ subtítulo aparece
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -757,7 +809,7 @@ fun InboxItem(
         if (showRemove) {
             Spacer(modifier = Modifier.width(8.dp))
 
-            // ✅ se você quiser pequeno mesmo, use Box (IconButton tem tamanho mínimo)
+
             Box(
                 modifier = Modifier
                     .size(16.dp)
