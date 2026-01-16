@@ -47,14 +47,6 @@ fun ProfileScreen(
                 showBackButton = false,
                 showProfileIcon = false
             )
-        },
-        bottomBar = {
-            AppBottomBar(
-                navController = navController,
-                currentRoute = "profile/$userToken",
-                userToken = userToken,
-                userName = userName
-            )
         }
     ) { paddingValues ->
         Column(

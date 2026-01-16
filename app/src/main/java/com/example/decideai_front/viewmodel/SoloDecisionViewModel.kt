@@ -55,7 +55,6 @@ class SoloDecisionViewModel : ViewModel() {
         errorMessage = null
     }
 
-    // Função para remover acentos e deixar em minúsculo conforme o banco
     private fun String.normalizeForApi(): String {
         val temp = Normalizer.normalize(this, Normalizer.Form.NFD)
         return temp.replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")

@@ -153,7 +153,6 @@ class GroupDecisionViewModel : ViewModel() {
                 val request = VoteGroupRequest(decisionId = decisionId, decline = true)
                 val response = RetrofitClient.service.voteGroupDecision("Bearer $token", request)
                 if (response.isSuccessful) {
-                    // Remove da lista
                     groupDecisions = groupDecisions.filter { it.id != decisionId }
                 }
             } catch (e: Exception) { e.printStackTrace() }

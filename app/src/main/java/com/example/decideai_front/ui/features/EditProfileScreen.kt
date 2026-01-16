@@ -62,14 +62,6 @@ fun EditProfileScreen(
                 showBackButton = false,
                 showProfileIcon = false
             )
-        },
-        bottomBar = {
-            AppBottomBar(
-                navController = navController,
-                currentRoute = null,
-                userToken = userToken,
-                userName = userName
-            )
         }
     ) { paddingValues ->
         Column(

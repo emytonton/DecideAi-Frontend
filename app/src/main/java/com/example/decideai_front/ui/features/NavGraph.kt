@@ -2,18 +2,25 @@ package com.example.decideai_front.ui.features
 
 import android.R.attr.name
 import android.content.Context
+import android.os.Bundle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat.enableEdgeToEdge
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.decideai_front.data.DataStorageManager
 import com.example.decideai_front.ui.features.*
 import com.example.decideai_front.ui.theme.DecideAiFrontTheme
 import com.example.decideai_front.viewmodel.*
+import kotlinx.coroutines.launch
 import java.net.URLDecoder
 import java.net.URLEncoder
 
@@ -28,6 +35,8 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
     val friendsViewModel: FriendsViewModel = viewModel()
     val optionsViewModel: OptionsDecisionViewModel = viewModel()
     val groupViewModel: GroupDecisionViewModel = viewModel()
+    val scope = rememberCoroutineScope()
+    val dataStorageManager = DataStorageManager(context)
 
     val startRoute = if (startToken != null) "home/$startName/$startToken" else "welcome"
 
@@ -182,11 +191,12 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
                     themeViewModel = themeViewModel,
                     onNavigateToEditProfile = { navController.navigate("edit_profile/$token") },
                     onLogout = {
-                        val sharedPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-                        sharedPrefs.edit().clear().apply()
-                        loginViewModel.resetState()
-                        profileViewModel.resetState()
-                        navController.navigate("welcome") { popUpTo(0) { inclusive = true } }
+                        scope.launch {
+                            dataStorageManager.saveSession("", "")
+                            loginViewModel.resetState()
+                            profileViewModel.resetState()
+                            navController.navigate("welcome") { popUpTo(0) { inclusive = true } }
+                        }
                     },
                     onNavigateBack = { navController.popBackStack() },
                     userName = name

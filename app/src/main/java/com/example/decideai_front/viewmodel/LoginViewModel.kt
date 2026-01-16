@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.decideai_front.data.DataStorageManager
 import com.example.decideai_front.data.model.LoginRequest
 import com.example.decideai_front.data.remote.RetrofitClient
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     var showErrorDialog by mutableStateOf(false)
     var loginSuccess by mutableStateOf(false)
 
-    private val sharedPreferences = application.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    private val dataStorageManager = DataStorageManager(application)
 
     fun onLoginClick() {
         if (email.isBlank() || password.isBlank()) {
@@ -80,10 +81,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun saveUserData(token: String, name: String) {
-        sharedPreferences.edit().apply {
-            putString("token", token)
-            putString("name", name)
-            apply()
+        viewModelScope.launch {
+            dataStorageManager.saveSession(token, name)
         }
     }
 }

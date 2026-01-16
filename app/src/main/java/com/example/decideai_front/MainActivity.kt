@@ -7,26 +7,30 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import com.example.decideai_front.data.DataStorageManager
 import com.example.decideai_front.ui.features.NavGraph
 import com.example.decideai_front.ui.theme.DecideAiFrontTheme
+import androidx.compose.runtime.getValue
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val savedToken = sharedPreferences.getString("token", null)
-        val savedName = sharedPreferences.getString("name", "Usuário")
-        val isDarkModeSaved = sharedPreferences.getBoolean("is_dark_mode", false)
+        val dataStorageManager = DataStorageManager(this)
 
         setContent {
-            DecideAiFrontTheme {
+            val token by dataStorageManager.token.collectAsState(initial = null)
+            val name by dataStorageManager.name.collectAsState(initial = "Usuário")
+            val isDark by dataStorageManager.isDarkMode.collectAsState(initial = false)
+
+            DecideAiFrontTheme(darkTheme = isDark) {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     NavGraph(
-                        startToken = savedToken,
-                        startName = savedName,
-                        initialDarkMode = isDarkModeSaved
+                        startToken = token,
+                        startName = name,
+                        initialDarkMode = isDark
                     )
                 }
             }

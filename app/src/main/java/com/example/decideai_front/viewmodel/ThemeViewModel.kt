@@ -7,13 +7,31 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.decideai_front.data.DataStorageManager
+import kotlinx.coroutines.launch
 
 class ThemeViewModel(application: Application) : AndroidViewModel(application) {
-    private val sharedPrefs = application.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    var isDarkTheme by mutableStateOf(sharedPrefs.getBoolean("is_dark_mode", false))
+
+    private val dataStorageManager = DataStorageManager(application)
+
+    var isDarkTheme by mutableStateOf(false)
         private set
+
+    init {
+        viewModelScope.launch {
+            dataStorageManager.isDarkMode.collect { savedTheme ->
+                isDarkTheme = savedTheme
+            }
+        }
+    }
+
     fun toggleTheme() {
-        isDarkTheme = !isDarkTheme
-        sharedPrefs.edit().putBoolean("is_dark_mode", isDarkTheme).apply()
+        val newTheme = !isDarkTheme
+        isDarkTheme = newTheme
+
+        viewModelScope.launch {
+            dataStorageManager.saveTheme(newTheme)
+        }
     }
 }

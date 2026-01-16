@@ -64,4 +64,5 @@ dependencies {
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.6")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("androidx.compose.material:material-icons-extended:1.7.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }
