@@ -204,7 +204,9 @@ fun FriendItem(user: UserResponse, onRemove: () -> Unit) {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -217,7 +219,8 @@ fun FriendItem(user: UserResponse, onRemove: () -> Unit) {
             Text(
                 text = user.username,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Button(
@@ -226,7 +229,7 @@ fun FriendItem(user: UserResponse, onRemove: () -> Unit) {
                 shape = RoundedCornerShape(50),
                 modifier = Modifier.height(36.dp)
             ) {
-                Text("Remover", fontSize = 12.sp)
+                Text("Remover", fontSize = 12.sp, color = Color.White)
             }
         }
     }

@@ -657,17 +657,21 @@ fun OptionItemDisplay(text: String, onRemove: () -> Unit) {
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(text, modifier = Modifier.weight(1f), color = Color.Gray)
-        IconButton(
-            onClick = onRemove,
+
+        // ✅ BOTAO VERMELHO AJUSTADO (circulo 20dp, X 12dp)
+        Box(
             modifier = Modifier
-                .size(24.dp)
-                .background(RedRemove, CircleShape)
+                .size(20.dp)
+                .clip(CircleShape)
+                .background(RedRemove)
+                .clickable { onRemove() },
+            contentAlignment = Alignment.Center
         ) {
             Icon(
-                Icons.Default.Close,
+                imageVector = Icons.Default.Close,
                 contentDescription = "Remover",
                 tint = Color.White,
-                modifier = Modifier.size(14.dp)
+                modifier = Modifier.size(12.dp)
             )
         }
     }
@@ -716,13 +720,21 @@ fun InboxItem(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(2.dp, RoundedCornerShape(12.dp))
-            .background(Color.White, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp)) // ✅ respeita dark/light
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(title, fontWeight = FontWeight.Bold)
-            Text(statusLabel, fontSize = 12.sp, color = if (isFinished) BluePrimary else GrayText)
+            Text(
+                text = title,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface // ✅ título aparece
+            )
+            Text(
+                text = statusLabel,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant // ✅ subtítulo aparece
+            )
         }
 
         if (isFinished && !hasViewed) {
@@ -732,27 +744,39 @@ fun InboxItem(
 
         Button(
             onClick = onAction,
-            colors = ButtonDefaults.buttonColors(containerColor = if (isFinished) Color(0xFF4CAF50) else BluePrimary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isFinished) Color(0xFF4CAF50) else BluePrimary
+            ),
             shape = RoundedCornerShape(8.dp),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
             modifier = Modifier.height(32.dp)
         ) {
-            Text(actionLabel, fontSize = 12.sp)
+            Text(actionLabel, fontSize = 12.sp, color = Color.White)
         }
 
         if (showRemove) {
             Spacer(modifier = Modifier.width(8.dp))
-            IconButton(
-                onClick = onRemove,
+
+            // ✅ se você quiser pequeno mesmo, use Box (IconButton tem tamanho mínimo)
+            Box(
                 modifier = Modifier
-                    .size(24.dp)
-                    .background(RedRemove, CircleShape)
+                    .size(16.dp)
+                    .clip(CircleShape)
+                    .background(RedRemove)
+                    .clickable { onRemove() },
+                contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.Close, contentDescription = "X", tint = Color.White, modifier = Modifier.size(14.dp))
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "X",
+                    tint = Color.White,
+                    modifier = Modifier.size(10.dp)
+                )
             }
         }
     }
 }
+
 
 @Composable
 fun VoteOptionItem(text: String, isSelected: Boolean, onClick: () -> Unit) {
