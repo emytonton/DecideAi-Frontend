@@ -164,9 +164,11 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
                 EditProfileScreen(navController = navController, userToken = token)
             }
 
+
             composable("settings/{token}") { backStackEntry ->
                 val token = backStackEntry.arguments?.getString("token") ?: ""
                 SettingsScreen(
+                    navController = navController,
                     token = token,
                     viewModel = profileViewModel,
                     themeViewModel = themeViewModel,
@@ -215,6 +217,42 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
                 val options = URLDecoder.decode(backStackEntry.arguments?.getString("options") ?: "", "UTF-8")
                 SelectFriendsScreen(navController, token, title, options, groupViewModel)
             }
+            composable(
+                route = "vote_group/{token}/{decisionId}",
+                arguments = listOf(
+                    navArgument("token") { type = NavType.StringType },
+                    navArgument("decisionId") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val token = backStackEntry.arguments?.getString("token") ?: ""
+                val decisionId = backStackEntry.arguments?.getString("decisionId") ?: ""
+
+                VoteGroupScreen(
+                    navController = navController,
+                    token = token,
+                    decisionId = decisionId,
+                    viewModel = groupViewModel
+                )
+            }
+
+            composable(
+                route = "group_result/{token}/{decisionId}",
+                arguments = listOf(
+                    navArgument("token") { type = NavType.StringType },
+                    navArgument("decisionId") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val token = backStackEntry.arguments?.getString("token") ?: ""
+                val decisionId = backStackEntry.arguments?.getString("decisionId") ?: ""
+
+                GroupResultScreen(
+                    navController = navController,
+                    token = token,
+                    decisionId = decisionId,
+                    viewModel = groupViewModel
+                )
+            }
+
         }
     }
 }

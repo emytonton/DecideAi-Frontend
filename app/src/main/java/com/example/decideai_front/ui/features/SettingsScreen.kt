@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -19,12 +18,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.decideai_front.ui.components.AppBottomBar
 import com.example.decideai_front.viewmodel.ProfileViewModel
 import com.example.decideai_front.viewmodel.ThemeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    navController: NavController,
     token: String,
     viewModel: ProfileViewModel,
     themeViewModel: ThemeViewModel,
@@ -33,11 +35,6 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit
 ) {
     val context = LocalContext.current
-
-
-    var isDarkTheme by remember { mutableStateOf(false) }
-    var areNotificationsEnabled by remember { mutableStateOf(false) }
-
 
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -51,6 +48,13 @@ fun SettingsScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            AppBottomBar(
+                navController = navController,
+                currentRoute = navController.currentBackStackEntry?.destination?.route,
+                userToken = token
+            )
         }
     ) { paddingValues ->
         Column(
@@ -60,7 +64,6 @@ fun SettingsScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
 
             Text(
                 text = "Aparências",
@@ -77,31 +80,14 @@ fun SettingsScreen(
                 onCheckedChange = { themeViewModel.toggleTheme() }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-
-            Text(
-                text = "Notificações",
-                modifier = Modifier.fillMaxWidth(),
-                color = Color.Gray,
-                fontSize = 14.sp
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            SettingsOptionItem(
-                label = "Ativar notificações",
-                icon = Icons.Default.Notifications,
-                isChecked = areNotificationsEnabled,
-                onCheckedChange = { areNotificationsEnabled = it }
-            )
-
             Spacer(modifier = Modifier.height(32.dp))
-
 
             Button(
                 onClick = onNavigateToEditProfile,
-                modifier = Modifier.fillMaxWidth().height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5)), // Azul índigo
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5)),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Editar Perfil", color = Color.White, fontSize = 16.sp)
@@ -109,11 +95,12 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-
             Button(
                 onClick = onLogout,
-                modifier = Modifier.fillMaxWidth().height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB0BEC5)), // Cinza claro
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB0BEC5)),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Sair", color = Color.White, fontSize = 16.sp)
@@ -121,11 +108,12 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-
             Button(
-                onClick = { showDeleteDialog = true }, // Abre o Modal
-                modifier = Modifier.fillMaxWidth().height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE57373)), // Vermelho suave
+                onClick = { showDeleteDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE57373)),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Apagar conta", color = Color.White, fontSize = 16.sp)
@@ -133,13 +121,10 @@ fun SettingsScreen(
         }
     }
 
-
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = {
-                Text(text = "Excluir conta?", fontWeight = FontWeight.Bold)
-            },
+            title = { Text(text = "Excluir conta?", fontWeight = FontWeight.Bold) },
             text = {
                 Text("Essa ação é irreversível. Você perderá o acesso e seus dados serão ocultados. Deseja continuar?")
             },
@@ -165,9 +150,7 @@ fun SettingsScreen(
                 }
             },
             dismissButton = {
-                OutlinedButton(
-                    onClick = { showDeleteDialog = false }
-                ) {
+                OutlinedButton(onClick = { showDeleteDialog = false }) {
                     Text("Cancelar")
                 }
             },
@@ -176,7 +159,6 @@ fun SettingsScreen(
         )
     }
 }
-
 
 @Composable
 fun SettingsOptionItem(
@@ -188,7 +170,7 @@ fun SettingsOptionItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFEEEEEE), shape = RoundedCornerShape(12.dp)) // Fundo cinza claro
+            .background(Color(0xFFEEEEEE), shape = RoundedCornerShape(12.dp))
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween

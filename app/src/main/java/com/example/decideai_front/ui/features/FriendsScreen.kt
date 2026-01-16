@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.decideai_front.data.model.FriendRequest
 import com.example.decideai_front.data.model.UserResponse
+import com.example.decideai_front.ui.components.AppBottomBar
 import com.example.decideai_front.viewmodel.FriendsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,6 +51,13 @@ fun FriendsScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 }
+            )
+        },
+        bottomBar = {
+            AppBottomBar(
+                navController = navController,
+                currentRoute = navController.currentBackStackEntry?.destination?.route,
+                userToken = token
             )
         }
     ) { paddingValues ->
@@ -117,9 +125,8 @@ fun FriendsScreen(
                             color = MaterialTheme.colorScheme.onBackground
                         )
 
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
                 if (viewModel.friendsList.isEmpty() && !viewModel.isLoading) {
                     item {
