@@ -1,5 +1,6 @@
 package com.example.decideai_front.ui.features
 
+import android.R.attr.name
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -34,6 +35,7 @@ import com.example.decideai_front.viewmodel.FriendsViewModel
 @Composable
 fun FriendsScreen(
     navController: NavController,
+    userName: String,
     token: String,
     viewModel: FriendsViewModel
 ) {
@@ -57,7 +59,8 @@ fun FriendsScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = navController.currentBackStackEntry?.destination?.route,
-                userToken = token
+                userToken = token,
+                userName = userName
             )
         }
     ) { paddingValues ->

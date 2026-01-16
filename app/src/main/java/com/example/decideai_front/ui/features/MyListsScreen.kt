@@ -33,7 +33,8 @@ fun MyListsScreen(
     navController: NavController,
     token: String,
     viewModel: OptionsDecisionViewModel,
-    avatarUrl: String? = null
+    avatarUrl: String? = null,
+    userName: String
 ) {
     LaunchedEffect(Unit) {
         viewModel.loadUserLists(token)
@@ -54,7 +55,8 @@ fun MyListsScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = "my_lists/$token",
-                userToken = token
+                userToken = token,
+                userName = userName
             )
         }
     ) { paddingValues ->

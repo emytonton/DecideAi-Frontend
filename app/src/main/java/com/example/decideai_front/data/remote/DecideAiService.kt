@@ -62,7 +62,7 @@ interface DecideAiService {
     @GET("api/v1/users/search")
     suspend fun searchUsers(@Header("Authorization") token: String, @Query("q") query: String): Response<List<UserResponse>>
 
-    // --- DECISÃO EM GRUPO (CORRIGIDO) ---
+    // --- DECISÃO EM GRUPO ---
 
     @GET("api/v1/group")
     suspend fun getGroupDecisions(
@@ -75,7 +75,6 @@ interface DecideAiService {
         @Path("id") id: String
     ): Response<GroupDecisionDetail>
 
-    // AQUI MUDOU: Agora espera um CreateGroupResponse em vez de Unit
     @POST("api/v1/group")
     suspend fun createGroupDecision(
         @Header("Authorization") token: String,

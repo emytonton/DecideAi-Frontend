@@ -49,6 +49,7 @@ fun HomeScreen(
                 navController = navController,
                 currentRoute = navController.currentBackStackEntry?.destination?.route,
                 userToken = userToken,
+                userName = userName
             )
         }
     ) { paddingValues ->

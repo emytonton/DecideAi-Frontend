@@ -14,7 +14,8 @@ import com.example.decideai_front.R
 fun AppBottomBar(
     navController: NavController,
     currentRoute: String?,
-    userToken: String
+    userToken: String,
+    userName: String
 ) {
     Column {
         HorizontalDivider(
@@ -28,17 +29,17 @@ fun AppBottomBar(
             NavigationBarItem(
                 icon = { Icon(painterResource(R.drawable.icon_add_person), null, Modifier.size(32.dp)) },
                 selected = currentRoute == "friends/$userToken",
-                onClick = { navController.navigate("friends/$userToken") }
+                onClick = { navController.navigate("friends/$userName/$userToken") }
             )
             NavigationBarItem(
                 icon = { Icon(painterResource(R.drawable.icon_home), "Início", Modifier.size(28.dp)) },
                 selected = currentRoute?.contains("home") == true,
-                onClick = { navController.navigate("home/user/$userToken") }
+                onClick = { navController.navigate("home/$userName/$userToken") }
             )
             NavigationBarItem(
                 icon = { Icon(painterResource(R.drawable.icon_settings), "Configurações", Modifier.size(32.dp)) },
                 selected = currentRoute == "settings/$userToken",
-                onClick = { navController.navigate("settings/$userToken") }
+                onClick = { navController.navigate("settings/$userName/$userToken") }
             )
         }
     }

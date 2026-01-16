@@ -34,7 +34,8 @@ fun OptionsDecisionScreen(
     userToken: String,
     viewModel: OptionsDecisionViewModel,
     avatarUrl: String? = null,
-    listIdToEdit: String? = null
+    listIdToEdit: String? = null,
+    userName: String
 ) {
     var listName by remember { mutableStateOf("") }
     var currentOption by remember { mutableStateOf("") }
@@ -75,7 +76,8 @@ fun OptionsDecisionScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = null,
-                userToken = userToken
+                userToken = userToken,
+                userName = userName
             )
         }
     ) { paddingValues ->

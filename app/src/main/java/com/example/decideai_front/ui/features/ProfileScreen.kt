@@ -31,7 +31,8 @@ import com.example.decideai_front.viewmodel.ProfileViewModel
 fun ProfileScreen(
     navController: NavHostController,
     userToken: String,
-    viewModel: ProfileViewModel = viewModel()
+    viewModel: ProfileViewModel = viewModel(),
+    userName: String
 ) {
     LaunchedEffect(Unit) {
         viewModel.loadProfile(userToken)
@@ -51,7 +52,8 @@ fun ProfileScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = "profile/$userToken",
-                userToken = userToken
+                userToken = userToken,
+                userName = userName
             )
         }
     ) { paddingValues ->
