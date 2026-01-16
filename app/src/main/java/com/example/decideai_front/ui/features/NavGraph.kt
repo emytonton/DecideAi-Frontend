@@ -38,7 +38,11 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
     val scope = rememberCoroutineScope()
     val dataStorageManager = DataStorageManager(context)
 
-    val startRoute = if (startToken != null) "home/$startName/$startToken" else "welcome"
+    val startRoute = if (!startToken.isNullOrEmpty()) {
+        "home/$startName/$startToken"
+    } else {
+        "welcome"
+    }
 
     DecideAiFrontTheme(darkTheme = isDark) {
         NavHost(navController = navController, startDestination = startRoute) {
@@ -195,7 +199,10 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
                             dataStorageManager.saveSession("", "")
                             loginViewModel.resetState()
                             profileViewModel.resetState()
-                            navController.navigate("welcome") { popUpTo(0) { inclusive = true } }
+                            navController.navigate("welcome") {
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                            }
                         }
                     },
                     onNavigateBack = { navController.popBackStack() },

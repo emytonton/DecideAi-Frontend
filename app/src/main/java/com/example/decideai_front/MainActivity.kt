@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
             DecideAiFrontTheme(darkTheme = isDark) {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     NavGraph(
-                        startToken = token,
+                        startToken = if (token.isNullOrEmpty()) null else token,
                         startName = name,
                         initialDarkMode = isDark
                     )

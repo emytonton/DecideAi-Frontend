@@ -98,7 +98,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
-                onClick = onLogout,
+                onClick = { onLogout() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
