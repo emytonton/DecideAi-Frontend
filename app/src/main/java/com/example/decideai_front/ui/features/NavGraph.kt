@@ -9,11 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.decideai_front.ui.features.*
 import com.example.decideai_front.ui.theme.DecideAiFrontTheme
 import com.example.decideai_front.viewmodel.*
 import java.net.URLDecoder
-import java.net.URLEncoder
 
 @Composable
 fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) {
@@ -125,7 +123,12 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
             ) { backStackEntry ->
                 val token = backStackEntry.arguments?.getString("token") ?: ""
                 val listId = backStackEntry.arguments?.getString("listId")
-                OptionsDecisionScreen(navController = navController, userToken = token, viewModel = optionsViewModel, listIdToEdit = listId)
+                OptionsDecisionScreen(
+                    navController = navController,
+                    userToken = token,
+                    viewModel = optionsViewModel,
+                    listIdToEdit = listId
+                )
             }
 
             composable("options_result/{resultText}") { backStackEntry ->
@@ -143,9 +146,11 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
                 EditProfileScreen(navController = navController, userToken = token)
             }
 
+
             composable("settings/{token}") { backStackEntry ->
                 val token = backStackEntry.arguments?.getString("token") ?: ""
                 SettingsScreen(
+                    navController = navController,
                     token = token,
                     viewModel = profileViewModel,
                     themeViewModel = themeViewModel,
@@ -194,6 +199,42 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
                 val options = URLDecoder.decode(backStackEntry.arguments?.getString("options") ?: "", "UTF-8")
                 SelectFriendsScreen(navController, token, title, options, groupViewModel)
             }
+            composable(
+                route = "vote_group/{token}/{decisionId}",
+                arguments = listOf(
+                    navArgument("token") { type = NavType.StringType },
+                    navArgument("decisionId") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val token = backStackEntry.arguments?.getString("token") ?: ""
+                val decisionId = backStackEntry.arguments?.getString("decisionId") ?: ""
+
+                VoteGroupScreen(
+                    navController = navController,
+                    token = token,
+                    decisionId = decisionId,
+                    viewModel = groupViewModel
+                )
+            }
+
+            composable(
+                route = "group_result/{token}/{decisionId}",
+                arguments = listOf(
+                    navArgument("token") { type = NavType.StringType },
+                    navArgument("decisionId") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val token = backStackEntry.arguments?.getString("token") ?: ""
+                val decisionId = backStackEntry.arguments?.getString("decisionId") ?: ""
+
+                GroupResultScreen(
+                    navController = navController,
+                    token = token,
+                    decisionId = decisionId,
+                    viewModel = groupViewModel
+                )
+            }
+
         }
     }
 }

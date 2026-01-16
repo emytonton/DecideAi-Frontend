@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.decideai_front.data.model.FriendRequest
 import com.example.decideai_front.data.model.UserResponse
+import com.example.decideai_front.ui.components.AppBottomBar
 import com.example.decideai_front.viewmodel.FriendsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,6 +51,13 @@ fun FriendsScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 }
+            )
+        },
+        bottomBar = {
+            AppBottomBar(
+                navController = navController,
+                currentRoute = navController.currentBackStackEntry?.destination?.route,
+                userToken = token
             )
         }
     ) { paddingValues ->
@@ -105,20 +113,15 @@ fun FriendsScreen(
                     }
                 }
 
+                item {
+                    Text(
+                        text = "Meus Amigos",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
 
-
-                    item {
-
-
-                        Text(
-                            text = "Meus Amigos",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
                 if (viewModel.friendsList.isEmpty() && !viewModel.isLoading) {
                     item {
@@ -137,8 +140,6 @@ fun FriendsScreen(
     }
 }
 
-
-
 @Composable
 fun RequestItem(request: FriendRequest, onAccept: () -> Unit, onDecline: () -> Unit) {
     Card(
@@ -156,13 +157,11 @@ fun RequestItem(request: FriendRequest, onAccept: () -> Unit, onDecline: () -> U
 
             Spacer(modifier = Modifier.width(12.dp))
 
-
             Text(
                 text = request.sender.username,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
-
 
             Button(
                 onClick = onAccept,
@@ -175,7 +174,6 @@ fun RequestItem(request: FriendRequest, onAccept: () -> Unit, onDecline: () -> U
             }
 
             Spacer(modifier = Modifier.width(8.dp))
-
 
             IconButton(
                 onClick = onDecline,
