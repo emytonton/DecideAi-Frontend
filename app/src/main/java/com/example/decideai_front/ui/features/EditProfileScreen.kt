@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,16 +36,16 @@ import com.example.decideai_front.viewmodel.ProfileViewModel
 fun EditProfileScreen(
     navController: NavHostController,
     userToken: String,
-    viewModel: ProfileViewModel = viewModel()
+    viewModel: ProfileViewModel = viewModel(),
 ) {
     LaunchedEffect(Unit) {
         viewModel.loadProfile(userToken)
     }
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let { viewModel.updateAvatar(it.toString()) }
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            viewModel.uploadAvatarToServer(context, userToken, it)
+        }
     }
 
     LaunchedEffect(viewModel.updateSuccess) {

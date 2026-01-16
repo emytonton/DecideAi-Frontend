@@ -2,6 +2,7 @@ package com.example.decideai_front.ui.features
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -56,13 +57,24 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
             }
 
             composable("home/{userName}/{token}") { backStackEntry ->
-                val name = backStackEntry.arguments?.getString("userName") ?: "Usuário"
+
+                val nameFromRoute = backStackEntry.arguments?.getString("userName")
+                val name = if (!nameFromRoute.isNullOrEmpty() && nameFromRoute != "{userName}") {
+                    nameFromRoute
+                } else {
+                    startName ?: "Usuário"
+                }
+
                 val token = backStackEntry.arguments?.getString("token") ?: ""
 
+                LaunchedEffect(Unit) {
+                    profileViewModel.loadProfile(token)
+                }
                 HomeScreen(
                     userName = name,
                     navController = navController,
                     userToken = token,
+                    avatarUrl = profileViewModel.avatar,
                     onNavigateToSettings = { navController.navigate("settings/$token") }
                 )
             }
@@ -70,11 +82,13 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
             composable("solo_decision/{userName}/{token}") { backStackEntry ->
                 val name = backStackEntry.arguments?.getString("userName") ?: "Usuário"
                 val token = backStackEntry.arguments?.getString("token") ?: ""
+
                 SoloDecisionScreen(
                     userName = name,
                     userToken = token,
                     navController = navController,
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = { navController.popBackStack() },
+                    avatarUrl = profileViewModel.avatar
                 )
             }
 
@@ -112,7 +126,8 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
                 MyListsScreen(
                     navController = navController,
                     token = token,
-                    viewModel = optionsViewModel
+                    viewModel = optionsViewModel,
+                    avatarUrl = profileViewModel.avatar
                 )
             }
 
@@ -125,7 +140,13 @@ fun NavGraph(startToken: String?, startName: String?, initialDarkMode: Boolean) 
             ) { backStackEntry ->
                 val token = backStackEntry.arguments?.getString("token") ?: ""
                 val listId = backStackEntry.arguments?.getString("listId")
-                OptionsDecisionScreen(navController = navController, userToken = token, viewModel = optionsViewModel, listIdToEdit = listId)
+                OptionsDecisionScreen(
+                    navController = navController,
+                    userToken = token,
+                    viewModel = optionsViewModel,
+                    avatarUrl = profileViewModel.avatar,
+                    listIdToEdit = listId
+                )
             }
 
             composable("options_result/{resultText}") { backStackEntry ->

@@ -33,6 +33,7 @@ fun OptionsDecisionScreen(
     navController: NavController,
     userToken: String,
     viewModel: OptionsDecisionViewModel,
+    avatarUrl: String? = null,
     listIdToEdit: String? = null
 ) {
     var listName by remember { mutableStateOf("") }
@@ -65,6 +66,7 @@ fun OptionsDecisionScreen(
                 title = "DecideAí",
                 navController = navController,
                 userToken = userToken,
+                avatarUrl = avatarUrl,
                 showBackButton = false,
                 showProfileIcon = true
             )
@@ -281,7 +283,7 @@ fun OptionsDecisionScreen(
                             shape = RoundedCornerShape(12.dp),
                             elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
                         ) {
-                            Text("Salvar", fontWeight = FontWeight.Bold)
+                                Text("Salvar", fontWeight = FontWeight.Bold)
                         }
 
                         Button(

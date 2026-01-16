@@ -1,8 +1,12 @@
 package com.example.decideai_front.data.remote
 
 import com.example.decideai_front.data.model.*
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
+import retrofit2.http.Multipart
+import retrofit2.http.PATCH
+import retrofit2.http.Part
 
 interface DecideAiService {
     // --- AUTH ---
@@ -95,4 +99,11 @@ interface DecideAiService {
         @Header("Authorization") token: String,
         @Body request: NotificationTokenRequest
     ): Response<Unit>
+
+    @Multipart
+    @PATCH("api/v1/users/avatar")
+    suspend fun uploadAvatar(
+        @Header("Authorization") token: String,
+        @Part avatar: MultipartBody.Part
+    ): Response<UserResponse>
 }

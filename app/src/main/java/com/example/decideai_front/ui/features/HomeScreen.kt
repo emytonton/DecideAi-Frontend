@@ -30,7 +30,8 @@ fun HomeScreen(
     userName: String,
     userToken: String,
     navController: NavHostController,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    avatarUrl: String? = null
 ) {
     Scaffold(
         topBar = {
@@ -38,6 +39,7 @@ fun HomeScreen(
                 title = "DecideAí",
                 navController = navController,
                 userToken = userToken,
+                avatarUrl = avatarUrl,
                 showBackButton = false,
                 showProfileIcon = true
             )
@@ -46,7 +48,7 @@ fun HomeScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = navController.currentBackStackEntry?.destination?.route,
-                userToken = userToken
+                userToken = userToken,
             )
         }
     ) { paddingValues ->

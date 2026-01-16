@@ -39,11 +39,13 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
                 if (response.isSuccessful) {
                     val body = response.body()
-                    userName = body?.user?.username ?: "Usuário"
-                    userToken = body?.accessToken ?: ""
+                    val token = body?.accessToken ?: ""
+                    val name = body?.user?.username ?: "Usuário"
 
-                    if (userToken.isNotEmpty()) {
-                        saveUserData(userToken, userName)
+                    if (token.isNotEmpty()) {
+                        userName = name
+                        userToken = token
+                        saveUserData(token, name)
                         loginSuccess = true
                     } else {
                         errorMessage = "Erro ao recuperar token."
@@ -72,7 +74,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     private fun saveUserData(token: String, name: String) {
         sharedPreferences.edit().apply {
             putString("token", token)
-            putString("username", name)
+            putString("name", name)
             apply()
         }
     }

@@ -31,7 +31,7 @@ import java.net.URLEncoder
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun SoloDecisionScreen(onNavigateBack: () -> Unit, userToken: String, navController: NavHostController, userName: String) {
+fun SoloDecisionScreen(onNavigateBack: () -> Unit, userToken: String, navController: NavHostController, userName: String, avatarUrl: String? = null) {
     val viewModel: SoloDecisionViewModel = viewModel()
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -56,11 +56,17 @@ fun SoloDecisionScreen(onNavigateBack: () -> Unit, userToken: String, navControl
 
     LaunchedEffect(viewModel.decisionResult) {
         viewModel.decisionResult?.let { result ->
-            val safeTitle = URLEncoder.encode(result.title, "UTF-8")
-            val safeDetails = URLEncoder.encode(result.details, "UTF-8")
+            // Use URLEncoder para garantir que títulos com espaços não quebrem a rota
+            val title = URLEncoder.encode(result.title, "UTF-8").replace("+", "%20")
+            val details = URLEncoder.encode(result.details, "UTF-8").replace("+", "%20")
 
-            navController.navigate("decision_result/$safeTitle/$safeDetails/$userName/$userToken")
-            viewModel.clearResult()
+            val route = "decision_result/$title/$details/$userName/$userToken"
+            println("DEBUG NAV: Tentando navegar para $route")
+            navController.navigate(route) {
+                launchSingleTop = true // Evita múltiplas telas de resultado
+            }
+
+            viewModel.clearResult() // Impede disparos repetidos
         }
     }
 
@@ -70,6 +76,7 @@ fun SoloDecisionScreen(onNavigateBack: () -> Unit, userToken: String, navControl
                 title = "DecideAí",
                 navController = navController,
                 userToken = userToken,
+                avatarUrl = avatarUrl,
                 showBackButton = false,
                 showProfileIcon = true
             )
@@ -258,6 +265,7 @@ fun SoloDecisionScreen(onNavigateBack: () -> Unit, userToken: String, navControl
                     Spacer(modifier = Modifier.height(16.dp))
                     Surface(
                         onClick = {
+                            println("DEBUG: Clique no dado!")
                             viewModel.getDecision(userToken, currentCategory, selectedFilters, selectedDropdownOption)
                         },
                         modifier = Modifier

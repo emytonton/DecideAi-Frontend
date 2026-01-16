@@ -32,7 +32,8 @@ import com.example.decideai_front.ui.components.AppTopBar
 fun MyListsScreen(
     navController: NavController,
     token: String,
-    viewModel: OptionsDecisionViewModel
+    viewModel: OptionsDecisionViewModel,
+    avatarUrl: String? = null
 ) {
     LaunchedEffect(Unit) {
         viewModel.loadUserLists(token)
@@ -44,6 +45,7 @@ fun MyListsScreen(
                 title = "DecideAí",
                 navController = navController,
                 userToken = token,
+                avatarUrl = avatarUrl,
                 showBackButton = false,
                 showProfileIcon = true
             )

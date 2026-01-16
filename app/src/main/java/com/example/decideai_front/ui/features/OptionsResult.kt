@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,11 +33,18 @@ import com.example.decideai_front.R
 @Composable
 fun OptionsResultScreen(result: String, onClose: () -> Unit) {
     Column(
-        modifier = Modifier.fillMaxSize().background(Color.White).padding(24.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Decisão final!", fontSize = 20.sp, color = Color.Gray)
+        Text(
+            text = "Decisão final!",
+            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+        )
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -49,8 +57,16 @@ fun OptionsResultScreen(result: String, onClose: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(result, fontSize = 32.sp, fontWeight = FontWeight.Bold)
-                HorizontalDivider(modifier = Modifier.width(100.dp).padding(vertical = 12.dp))
+                Text(
+                    text = result,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                HorizontalDivider(
+                    modifier = Modifier.width(100.dp).padding(vertical = 12.dp),
+                    color = Color.White.copy(alpha = 0.5f)
+                )
                 Icon(
                     painter = painterResource(id = R.drawable.icon_dice),
                     contentDescription = null,
@@ -68,7 +84,7 @@ fun OptionsResultScreen(result: String, onClose: () -> Unit) {
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFC5E1A5)),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Text("Encerrar", color = Color.White)
+            Text("Encerrar", color = Color.White, fontWeight = FontWeight.Bold)
         }
     }
 }

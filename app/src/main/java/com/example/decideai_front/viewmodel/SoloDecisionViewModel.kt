@@ -22,14 +22,11 @@ class SoloDecisionViewModel : ViewModel() {
             errorMessage = null
 
             try {
-                // Normaliza a categoria para minúsculo
                 val normalizedCategory = category.lowercase()
 
-                // Normaliza os filtros dos chips (Ação -> acao)
                 val sanitizedFilters = filters.map { it.normalizeForApi() }
                 val filter1Value = if (sanitizedFilters.isNotEmpty()) sanitizedFilters.joinToString(" | ") else null
 
-                // Normaliza a opção do dropdown (Netflix -> netflix)
                 val filter2Value = if (option.isNotEmpty()) option.normalizeForApi() else null
 
                 val request = SoloDecisionRequest(

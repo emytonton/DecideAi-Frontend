@@ -68,13 +68,13 @@ fun FriendsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { navController.navigate("search_users/$token") },
-                enabled = false, // Desabilitado para funcionar apenas como botão
+                enabled = false,
                 shape = RoundedCornerShape(24.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    disabledContainerColor = Color.White,
-                    disabledBorderColor = Color.LightGray,
-                    disabledTextColor = Color.Black,
-                    disabledPlaceholderColor = Color.Gray
+                    disabledContainerColor = MaterialTheme.colorScheme.surface,
+                    disabledBorderColor = MaterialTheme.colorScheme.outline,
+                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                    disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
 
@@ -113,7 +113,8 @@ fun FriendsScreen(
                         Text(
                             text = "Meus Amigos",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
+                            fontSize = 18.sp,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -145,7 +146,9 @@ fun RequestItem(request: FriendRequest, onAccept: () -> Unit, onDecline: () -> U
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -160,7 +163,8 @@ fun RequestItem(request: FriendRequest, onAccept: () -> Unit, onDecline: () -> U
             Text(
                 text = request.sender.username,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
 
