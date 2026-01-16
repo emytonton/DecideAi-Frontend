@@ -11,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,10 +35,20 @@ fun SearchUsersScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Procurar user", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        "Procurar user",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Voltar",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
             )
@@ -56,17 +65,37 @@ fun SearchUsersScreen(
                 onValueChange = { query ->
                     viewModel.searchUsers(token, query)
                 },
-                placeholder = { Text("Digite o nome...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                placeholder = {
+                    Text(
+                        "Digite o nome...",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
-                singleLine = true
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    cursorColor = MaterialTheme.colorScheme.primary
+                )
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             if (viewModel.searchResults.isEmpty() && viewModel.searchQuery.isNotEmpty()) {
-                Text("Nenhum usuário encontrado.", color = Color.Gray, modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text(
+                    "Nenhum usuário encontrado.",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
 
             LazyColumn(
@@ -101,7 +130,9 @@ fun SearchUserItem(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -114,14 +145,15 @@ fun SearchUserItem(
             Text(
                 text = user.username,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             when {
                 isFriend -> {
                     Text(
                         text = "Amigo",
-                        color = Color(0xFF4CAF50),
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
                         modifier = Modifier.padding(end = 8.dp)
@@ -131,17 +163,23 @@ fun SearchUserItem(
                     Button(
                         onClick = {},
                         enabled = false,
-                        colors = ButtonDefaults.buttonColors(disabledContainerColor = Color.Gray),
+                        colors = ButtonDefaults.buttonColors(
+                            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
                         shape = RoundedCornerShape(50),
                         modifier = Modifier.height(36.dp)
                     ) {
-                        Text("Enviado", fontSize = 12.sp, color = Color.White)
+                        Text("Enviado", fontSize = 12.sp)
                     }
                 }
                 else -> {
                     Button(
                         onClick = onAdd,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5)),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
                         shape = RoundedCornerShape(50),
                         modifier = Modifier.height(36.dp)
                     ) {

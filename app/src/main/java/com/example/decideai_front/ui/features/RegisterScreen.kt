@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.decideai_front.R
+import com.example.decideai_front.ui.components.AppErrorDialog
 import com.example.decideai_front.viewmodel.RegisterViewModel
 
 @Composable
@@ -22,7 +23,12 @@ fun RegisterScreen(
     modifier: Modifier = Modifier,
     viewModel: RegisterViewModel = viewModel()
 ) {
-    // Observa o sucesso para mudar de tela automaticamente
+    AppErrorDialog(
+        showDialog = viewModel.showErrorDialog,
+        message = viewModel.errorMessage,
+        onDismiss = { viewModel.showErrorDialog = false }
+    )
+
     LaunchedEffect(viewModel.isSuccess) {
         if (viewModel.isSuccess) {
             onNavigateToLogin()
@@ -33,12 +39,12 @@ fun RegisterScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(24.dp)
-            .verticalScroll(rememberScrollState()), // Garante que caiba em telas menores
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo), // Use o nome do seu arquivo
+            painter = painterResource(id = R.drawable.logo),
             contentDescription = "Logo",
             modifier = Modifier.size(160.dp)
         )
@@ -56,27 +62,22 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Campo Email
         CustomTextField(value = viewModel.email, onValueChange = { viewModel.email = it }, placeholder = "Email")
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo Username (Exigido pela API)
         CustomTextField(value = viewModel.username, onValueChange = { viewModel.username = it }, placeholder = "Username")
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo Senha
         CustomTextField(value = viewModel.password, onValueChange = { viewModel.password = it }, placeholder = "Senha", isPassword = true)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo Confirmação de Senha
         CustomTextField(value = viewModel.confirmPassword, onValueChange = { viewModel.confirmPassword = it }, placeholder = "Confirme sua Senha", isPassword = true)
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Botão Cadastrar (Azul do Figma)
         Button(
             onClick = { viewModel.onRegisterClick() },
             modifier = Modifier.fillMaxWidth().height(56.dp),
@@ -84,8 +85,11 @@ fun RegisterScreen(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF324290)),
             enabled = !viewModel.isLoading
         ) {
-            if (viewModel.isLoading) CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
-            else Text("Cadastrar", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            if (viewModel.isLoading) {
+                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+            } else {
+                Text("Cadastrar", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -99,14 +103,9 @@ fun RegisterScreen(
                 modifier = Modifier.clickable { onNavigateToLogin() }
             )
         }
-
-        viewModel.errorMessage?.let {
-            Text(text = it, color = Color.Red, modifier = Modifier.padding(top = 16.dp))
-        }
     }
 }
 
-// Componente reutilizável para os campos de texto do Figma
 @Composable
 fun CustomTextField(value: String, onValueChange: (String) -> Unit, placeholder: String, isPassword: Boolean = false) {
     TextField(

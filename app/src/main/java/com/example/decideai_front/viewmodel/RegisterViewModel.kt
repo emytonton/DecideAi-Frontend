@@ -14,29 +14,44 @@ class RegisterViewModel : ViewModel() {
     var confirmPassword by mutableStateOf("")
 
     var isLoading by mutableStateOf(false)
-    var errorMessage by mutableStateOf<String?>(null)
+    var errorMessage by mutableStateOf("")
+    var showErrorDialog by mutableStateOf(false)
     var isSuccess by mutableStateOf(false)
 
     fun onRegisterClick() {
+
+        if (email.isBlank() || username.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
+            errorMessage = "Todos os campos são obrigatórios. Por favor, preencha tudo."
+            showErrorDialog = true
+            return
+        }
+
+
         if (password != confirmPassword) {
-            errorMessage = "As senhas não coincidem."
+            errorMessage = "As senhas não coincidem. Verifique e tente novamente."
+            showErrorDialog = true
             return
         }
 
         viewModelScope.launch {
             isLoading = true
-            errorMessage = null
             try {
                 val request = RegisterRequest(username, email, password)
                 val response = RetrofitClient.service.signup(request)
 
                 if (response.isSuccessful) {
-                    isSuccess = true // Navegar para o Login após sucesso
+                    isSuccess = true
                 } else {
-                    errorMessage = "Erro: ${response.code()} - Verifique os dados"
+                    errorMessage = when (response.code()) {
+                        409 -> "Este e-mail ou nome de usuário já está em uso."
+                        400 -> "Dados inválidos. Verifique o formato do e-mail ou a senha."
+                        else -> "Erro no cadastro: Verifique seus dados ou tente mais tarde."
+                    }
+                    showErrorDialog = true
                 }
             } catch (e: Exception) {
-                errorMessage = "Falha na conexão com o servidor."
+                errorMessage = "Falha na conexão com o servidor. Verifique sua internet."
+                showErrorDialog = true
             } finally {
                 isLoading = false
             }

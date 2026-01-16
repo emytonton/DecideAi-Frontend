@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.decideai_front.R
+import com.example.decideai_front.ui.components.AppErrorDialog
 import com.example.decideai_front.viewmodel.LoginViewModel
 
 @Composable
@@ -25,9 +26,14 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit = {},
     onNavigateToHome: (String, String) -> Unit = {_, _-> }
 ) {
+    AppErrorDialog(
+        showDialog = viewModel.showErrorDialog,
+        message = viewModel.errorMessage,
+        onDismiss = { viewModel.showErrorDialog = false }
+    )
+
     androidx.compose.runtime.LaunchedEffect(viewModel.loginSuccess) {
         if (viewModel.loginSuccess) {
-            println("DEBUG: Login com sucesso! Navegando...")
             onNavigateToHome(viewModel.userName, viewModel.userToken)
         }
     }
@@ -49,7 +55,7 @@ fun LoginScreen(
         Text(
             text = "Bem vindo de volta",
             fontSize = 32.sp,
-            fontWeight = FontWeight.Light, // Montserrat Light
+            fontWeight = FontWeight.Light,
             color = Color.Black
         )
         Text(
@@ -59,7 +65,6 @@ fun LoginScreen(
         )
 
         Spacer(modifier = Modifier.height(40.dp))
-
 
         TextField(
             value = viewModel.email,
@@ -95,7 +100,7 @@ fun LoginScreen(
         )
 
         TextButton(
-            onClick = { /* Esqueci senha */ },
+            onClick = { },
             modifier = Modifier.align(Alignment.End)
         ) {
             Text("Esqueceu a senha?", color = Color(0xFF324290), fontWeight = FontWeight.Bold)
@@ -103,9 +108,15 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-
         Button(
-            onClick = { viewModel.onLoginClick() },
+            onClick = {
+                if (viewModel.email.isBlank() || viewModel.password.isBlank()) {
+                    viewModel.errorMessage = "Por favor, preencha todos os campos antes de prosseguir."
+                    viewModel.showErrorDialog = true
+                } else {
+                    viewModel.onLoginClick()
+                }
+            },
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF324290)),

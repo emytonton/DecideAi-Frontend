@@ -18,21 +18,21 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     var userName by mutableStateOf("")
     var userToken by mutableStateOf("")
     var isLoading by mutableStateOf(false)
-    var errorMessage by mutableStateOf<String?>(null)
+    var errorMessage by mutableStateOf("")
+    var showErrorDialog by mutableStateOf(false)
     var loginSuccess by mutableStateOf(false)
 
     private val sharedPreferences = application.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     fun onLoginClick() {
-        if (email.isEmpty() || password.isEmpty()) {
-            errorMessage = "Preencha todos os campos"
+        if (email.isBlank() || password.isBlank()) {
+            errorMessage = "Por favor, preencha todos os campos."
+            showErrorDialog = true
             return
         }
 
         viewModelScope.launch {
             isLoading = true
-            errorMessage = null
-
             try {
                 val request = LoginRequest(email, password)
                 val response = RetrofitClient.service.login(request)
@@ -48,13 +48,20 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                         saveUserData(token, name)
                         loginSuccess = true
                     } else {
-                        errorMessage = "Erro ao recuperar token."
+                        errorMessage = "Erro ao recuperar dados de acesso."
+                        showErrorDialog = true
                     }
                 } else {
-                    errorMessage = "Login inválido: Verifique seus dados"
+                    errorMessage = when (response.code()) {
+                        404 -> "E-mail não encontrado. Verifique se digitou corretamente."
+                        401 -> "Senha incorreta. Tente novamente."
+                        else -> "Falha no login: Verifique seus dados."
+                    }
+                    showErrorDialog = true
                 }
             } catch (e: Exception) {
-                errorMessage = "Falha na conexão com o servidor."
+                errorMessage = "Não foi possível conectar ao servidor. Verifique sua conexão."
+                showErrorDialog = true
             } finally {
                 isLoading = false
             }
@@ -67,7 +74,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         userName = ""
         userToken = ""
         isLoading = false
-        errorMessage = null
+        errorMessage = ""
+        showErrorDialog = false
         loginSuccess = false
     }
 
