@@ -69,7 +69,8 @@ fun DecisionResultScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = null,
-                userToken = userToken
+                userToken = userToken,
+                userName = userName
             )
         }
     ) { paddingValues ->

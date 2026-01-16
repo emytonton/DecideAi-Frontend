@@ -32,7 +32,8 @@ fun SettingsScreen(
     themeViewModel: ThemeViewModel,
     onNavigateToEditProfile: () -> Unit,
     onLogout: () -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    userName: String
 ) {
     val context = LocalContext.current
 
@@ -53,7 +54,8 @@ fun SettingsScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = navController.currentBackStackEntry?.destination?.route,
-                userToken = token
+                userToken = token,
+                userName = userName
             )
         }
     ) { paddingValues ->

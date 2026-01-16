@@ -76,7 +76,8 @@ fun GroupHomeScreen(
     navController: NavController,
     token: String,
     viewModel: GroupDecisionViewModel,
-    avatarUrl: String?
+    avatarUrl: String?,
+    userName : String
 ) {
     var title by remember { mutableStateOf("") }
     var currentOption by remember { mutableStateOf("") }
@@ -98,7 +99,8 @@ fun GroupHomeScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = "group_home/$token",
-                userToken = token
+                userToken = token,
+                userName = userName
             )
         }
     ) { padding ->
@@ -236,7 +238,8 @@ fun SelectFriendsScreen(
     token: String,
     title: String,
     optionsString: String,
-    viewModel: GroupDecisionViewModel
+    viewModel: GroupDecisionViewModel,
+    userName: String
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
@@ -250,7 +253,8 @@ fun SelectFriendsScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = "group_home/$token",
-                userToken = token
+                userToken = token,
+                userName = userName
             )
         }
     ) { padding ->
@@ -341,7 +345,8 @@ fun SelectFriendsScreen(
 fun GroupInboxScreen(
     navController: NavController,
     token: String,
-    viewModel: GroupDecisionViewModel
+    viewModel: GroupDecisionViewModel,
+    userName: String
 ) {
     val context = LocalContext.current
 
@@ -364,7 +369,8 @@ fun GroupInboxScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = navController.currentBackStackEntry?.destination?.route,
-                userToken = token
+                userToken = token,
+                userName = userName
             )
         }
     ) { padding ->
@@ -457,7 +463,8 @@ fun VoteGroupScreen(
     navController: NavController,
     token: String,
     decisionId: String,
-    viewModel: GroupDecisionViewModel
+    viewModel: GroupDecisionViewModel,
+    userName: String
 ) {
     LaunchedEffect(decisionId) {
         viewModel.loadDecisionDetails(token, decisionId)
@@ -481,7 +488,8 @@ fun VoteGroupScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = navController.currentBackStackEntry?.destination?.route,
-                userToken = token
+                userToken = token,
+                userName = userName
             )
         }
     ) { padding ->
@@ -570,7 +578,8 @@ fun GroupResultScreen(
     token: String,
     decisionId: String,
     onClose: () -> Unit,
-    viewModel: GroupDecisionViewModel
+    viewModel: GroupDecisionViewModel,
+    userName: String
 ) {
     LaunchedEffect(decisionId) {
         viewModel.loadDecisionDetails(token, decisionId)
@@ -587,7 +596,8 @@ fun GroupResultScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = navController.currentBackStackEntry?.destination?.route,
-                userToken = token
+                userToken = token,
+                userName = userName
             )
         }
     ) { padding ->

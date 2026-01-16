@@ -63,10 +63,10 @@ fun SoloDecisionScreen(onNavigateBack: () -> Unit, userToken: String, navControl
             val route = "decision_result/$title/$details/$userName/$userToken"
             println("DEBUG NAV: Tentando navegar para $route")
             navController.navigate(route) {
-                launchSingleTop = true // Evita múltiplas telas de resultado
+                launchSingleTop = true
             }
 
-            viewModel.clearResult() // Impede disparos repetidos
+            viewModel.clearResult()
         }
     }
 
@@ -85,7 +85,8 @@ fun SoloDecisionScreen(onNavigateBack: () -> Unit, userToken: String, navControl
             AppBottomBar(
                 navController = navController,
                 currentRoute = "solo_decision/$userToken",
-                userToken = userToken
+                userToken = userToken,
+                userName = userName
             )
         }
     ) { paddingValues ->

@@ -37,6 +37,7 @@ fun EditProfileScreen(
     navController: NavHostController,
     userToken: String,
     viewModel: ProfileViewModel = viewModel(),
+    userName: String,
 ) {
     LaunchedEffect(Unit) {
         viewModel.loadProfile(userToken)
@@ -66,7 +67,8 @@ fun EditProfileScreen(
             AppBottomBar(
                 navController = navController,
                 currentRoute = null,
-                userToken = userToken
+                userToken = userToken,
+                userName = userName
             )
         }
     ) { paddingValues ->
